@@ -59,3 +59,8 @@ export interface Conversation {
   rideId: string;
   messages: Message[];
 }
+
+export interface Coordinates {
+  x: number;
+  y: number;
+}

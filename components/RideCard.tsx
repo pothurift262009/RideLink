@@ -1,14 +1,15 @@
 import React from 'react';
 import { Ride, User } from '../types';
-import { ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, UsersIcon, CarIcon } from './icons/Icons';
+import { ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, UsersIcon, CarIcon, RouteLineIcon } from './icons/Icons';
 
 interface RideCardProps {
   ride: Ride;
   onSelectRide: (ride: Ride) => void;
   users: User[];
+  isHighlighted?: boolean;
 }
 
-const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
+const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighlighted = false }) => {
   const driver = users.find(u => u.id === ride.driverId);
 
   if (!driver) return null;
@@ -16,7 +17,11 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
   return (
     <div 
       onClick={() => onSelectRide(ride)}
-      className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-200/80 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600 overflow-hidden flex transform hover:-translate-y-1"
+      className={`rounded-xl shadow-lg overflow-hidden flex transition-all duration-300 cursor-pointer transform hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] ${
+        isHighlighted
+          ? 'bg-indigo-50 dark:bg-slate-700 border-2 border-indigo-500 dark:border-indigo-400'
+          : 'bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600'
+      }`}
     >
       {/* Driver Info Panel */}
       <div className="w-1/3 lg:w-1/4 p-4 flex flex-col items-center justify-center bg-slate-50/70 dark:bg-slate-900/50 text-center border-r border-slate-200 dark:border-slate-700">
@@ -44,11 +49,8 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
             <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{ride.departureTime}</p>
             <p className="text-sm text-slate-500 dark:text-slate-400">{ride.from}</p>
           </div>
-          <div className="flex-grow px-2 lg:px-4">
-              <div className="w-full h-px bg-slate-200 dark:bg-slate-600 relative">
-                  <div className="w-2.5 h-2.5 bg-white dark:bg-slate-800 border-2 border-slate-400 dark:border-slate-500 rounded-full absolute top-1/2 left-0 -translate-y-1/2"></div>
-                  <div className="w-2.5 h-2.5 bg-slate-400 dark:bg-slate-500 rounded-full absolute top-1/2 right-0 -translate-y-1/2"></div>
-              </div>
+          <div className="flex-grow px-2 lg:px-4 flex items-center">
+              <RouteLineIcon className="w-full h-3" />
           </div>
           <div>
             <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{ride.estimatedArrivalTime}</p>

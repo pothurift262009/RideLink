@@ -1,4 +1,4 @@
-import { User, Ride, Gender, VerificationType, Rating, Conversation } from '../types';
+import { User, Ride, Gender, VerificationType, Rating, Conversation, Coordinates } from '../types';
 
 export const mockUsers: User[] = [
   {
@@ -165,3 +165,8 @@ export const mockConversations: Conversation[] = [
         ]
     }
 ];
+
+export const cityCoordinates: { [key: string]: Coordinates } = {
+  'Chennai': { x: 85, y: 70 },
+  'Bangalore': { x: 20, y: 30 },
+};

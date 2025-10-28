@@ -3,6 +3,8 @@ import { Ride, User } from '../types';
 import { summarizeReviews } from '../services/geminiService';
 import { ArrowLeftIcon, ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, ClockIcon, UsersIcon, CarIcon, ChatBubbleIcon, SparklesIcon, SosIcon, CheckCircleIcon, type IconProps } from './icons/Icons';
 import ChatModal from './ChatModal';
+import MapComponent from './MapComponent';
+import { cityCoordinates } from '../data/mockData';
 
 interface RideDetailsProps {
   ride: Ride;
@@ -17,11 +19,13 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
   const [aiSummary, setAiSummary] = useState<string>('');
   const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(true);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
+  const [driverPosition, setDriverPosition] = useState<number>(10); // Start 10% into the ride
   
   const isDriver = currentUser?.id === driver.id;
   const canBook = currentUser && !isBooked && !isDriver;
   const canMessage = currentUser && isBooked;
 
+  // Effect for fetching AI summary
   useEffect(() => {
     const fetchSummary = async () => {
       setIsLoadingSummary(true);
@@ -32,11 +36,23 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
     fetchSummary();
   }, [driver.reviews]);
   
+  // Effect for simulating driver movement
+  useEffect(() => {
+    const movementInterval = setInterval(() => {
+      setDriverPosition(prev => (prev >= 90 ? 10 : prev + Math.random() * 5));
+    }, 2000);
+
+    return () => clearInterval(movementInterval);
+  }, []);
+
   const handleBook = () => {
     if (canBook) {
       onBook(ride);
     }
   }
+
+  const startCoords = cityCoordinates[ride.from];
+  const endCoords = cityCoordinates[ride.to];
 
   return (
     <>
@@ -47,6 +63,21 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
         </button>
 
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+          
+           {/* Live Tracking Map */}
+          {startCoords && endCoords && (
+             <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-3 ml-2">Live Route Tracking</h3>
+                <MapComponent
+                    startCoords={startCoords}
+                    endCoords={endCoords}
+                    driverPosition={driverPosition}
+                    highlightedRideId={ride.id}
+                    rides={[ride]}
+                />
+             </div>
+          )}
+
           <div className="p-8">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">

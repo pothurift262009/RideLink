@@ -39,6 +39,9 @@ const CancelModal: React.FC<CancelModalProps> = ({ isOpen, onClose, ride, driver
                     Are you sure you want to cancel your ride from <span className="font-semibold text-slate-700 dark:text-slate-200">{ride.from}</span> to <span className="font-semibold text-slate-700 dark:text-slate-200">{ride.to}</span> with {driver.name}?
                 </p>
             </div>
+             <p className="text-xs text-slate-500 dark:text-slate-400">
+                Cancellations within 24 hours may incur a small fee.
+            </p>
             <div className="mt-6 flex justify-center gap-4">
                  <button
                     type="button"

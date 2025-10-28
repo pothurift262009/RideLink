@@ -42,14 +42,15 @@ export const summarizeReviews = async (reviews: Rating[]): Promise<string> => {
 export const getSupportResponse = async (userPrompt: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
-  const prompt = `You are a friendly and knowledgeable support agent for RideLink, an intercity carpooling platform in India. Your goal is to provide helpful, concise, and polite assistance to users. Answer questions about booking rides, offering rides, payments, safety features, and user verification. If you don't know an answer, politely say you need to check with the support team. Keep your answers brief and easy to understand.
-
-User question: "${userPrompt}"`;
+  const systemInstruction = `You are a friendly and knowledgeable support agent for RideLink, an intercity carpooling platform in India. Your goal is to provide helpful, concise, and polite assistance to users. Answer questions about booking rides, offering rides, payments, safety features, and user verification. If you don't know an answer, politely say you need to check with the support team. Keep your answers brief and easy to understand.`;
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
-      contents: prompt,
+      contents: userPrompt,
+      config: {
+        systemInstruction: systemInstruction,
+      }
     });
     return response.text;
   } catch (error) {
