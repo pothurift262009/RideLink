@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Ride, User } from '../types';
 import { summarizeReviews } from '../services/geminiService';
-// FIX: Import IconProps to correctly type the icon prop for the InfoItem component.
 import { ArrowLeftIcon, ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, ClockIcon, UsersIcon, CarIcon, ChatBubbleIcon, SparklesIcon, SosIcon, CheckCircleIcon, type IconProps } from './icons/Icons';
 import ChatModal from './ChatModal';
 
@@ -9,16 +8,19 @@ interface RideDetailsProps {
   ride: Ride;
   driver: User;
   onBack: () => void;
-  bookedRideId: string | null;
+  currentUser: User | null;
+  isBooked: boolean;
   onBook: (rideId: string) => void;
 }
 
-const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, bookedRideId, onBook }) => {
+const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, currentUser, isBooked, onBook }) => {
   const [aiSummary, setAiSummary] = useState<string>('');
   const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(true);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
-
-  const isBooked = ride.id === bookedRideId;
+  
+  const isDriver = currentUser?.id === driver.id;
+  const canBook = currentUser && !isBooked && !isDriver;
+  const canMessage = currentUser && isBooked;
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -31,7 +33,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, bookedR
   }, [driver.reviews]);
   
   const handleBook = () => {
-    if (!isBooked) {
+    if (canBook) {
       onBook(ride.id);
     }
   }
@@ -109,18 +111,22 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, bookedR
             <div className="flex flex-col md:flex-row gap-4">
                 <button
                   onClick={handleBook}
-                  disabled={isBooked}
+                  disabled={!canBook}
                   className={`flex-1 flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-lg transition-all text-lg ${
                     isBooked
                       ? 'bg-green-100 text-green-700 cursor-not-allowed'
+                      : isDriver
+                      ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                      : !currentUser
+                      ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
                       : 'bg-indigo-600 text-white hover:bg-indigo-700'
                   }`}
                 >
-                  {isBooked ? <><CheckCircleIcon className="w-6 h-6"/> Ride Booked</> : 'Book Now'}
+                  {isBooked ? <><CheckCircleIcon className="w-6 h-6"/> Ride Booked</> : isDriver ? 'This is Your Ride' : !currentUser ? 'Log in to Book' : 'Book Now'}
                 </button>
                 <button
                   onClick={() => setIsChatOpen(true)}
-                  disabled={!isBooked}
+                  disabled={!canMessage}
                   className="flex-1 flex items-center justify-center gap-2 bg-white border-2 border-gray-300 text-gray-700 font-bold py-3 px-6 rounded-lg transition-all text-lg disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed hover:bg-gray-100"
                 >
                   <ChatBubbleIcon className="w-6 h-6"/>
@@ -134,11 +140,12 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, bookedR
           </div>
         </div>
       </div>
-      {isChatOpen && (
+      {isChatOpen && currentUser && (
         <ChatModal
           isOpen={isChatOpen}
           onClose={() => setIsChatOpen(false)}
           driver={driver}
+          currentUser={currentUser}
           rideId={ride.id}
         />
       )}
@@ -146,10 +153,6 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, bookedR
   );
 };
 
-
-// FIX: Changed icon prop type to the more specific React.ReactElement<IconProps>.
-// This resolves the TypeScript error with React.cloneElement by providing better type information,
-// ensuring that the `className` prop can be safely applied.
 const InfoItem: React.FC<{icon: React.ReactElement<IconProps>, label: string, value: string}> = ({ icon, label, value }) => (
     <div className="flex items-center gap-3">
         <div className="text-indigo-600 bg-indigo-100 p-2 rounded-full">

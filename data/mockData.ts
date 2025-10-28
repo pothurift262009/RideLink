@@ -1,4 +1,3 @@
-
 import { User, Ride, Gender, VerificationType, Rating, Conversation } from '../types';
 
 export const mockUsers: User[] = [
@@ -55,6 +54,16 @@ export const mockUsers: User[] = [
         { id: 'r9', raterId: 'u10', rating: 4, comment: 'Decent trip, got me from A to B.' },
         { id: 'r10', raterId: 'u11', rating: 2, comment: 'Car was not very clean and the driving was a bit aggressive for my liking.' },
     ]
+  },
+  {
+    id: 'user_passenger_1',
+    name: 'Rohan Mehta',
+    avatarUrl: 'https://picsum.photos/seed/rohan/200/200',
+    gender: Gender.Male,
+    verificationType: VerificationType.LinkedIn,
+    isVerified: true,
+    trustScore: 4.6,
+    reviews: [],
   },
 ];
 
@@ -120,7 +129,7 @@ export const mockConversations: Conversation[] = [
     {
         rideId: 'ride_1',
         messages: [
-            { id: 'msg_1', senderId: 'currentUser', text: 'Hi Priya! Just booked my seat. Can you let me know the exact pickup point?', timestamp: '10:30 AM' },
+            { id: 'msg_1', senderId: 'user_passenger_1', text: 'Hi Priya! Just booked my seat. Can you let me know the exact pickup point?', timestamp: '10:30 AM' },
             { id: 'msg_2', senderId: 'user_1', text: 'Hi there! Of course. I will pick you up from the main entrance of Koyambedu Bus Stand. Is that okay?', timestamp: '10:31 AM' },
         ]
     }

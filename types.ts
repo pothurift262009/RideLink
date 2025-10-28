@@ -1,4 +1,3 @@
-
 export enum Gender {
   Male = 'Male',
   Female = 'Female',
@@ -46,8 +45,8 @@ export interface Rating {
 }
 
 export interface Message {
-  id: string;
-  senderId: string; // 'currentUser' or a driver's userId
+  id:string;
+  senderId: string; // Can be any user's ID
   text: string;
   timestamp: string;
 }

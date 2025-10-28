@@ -7,10 +7,11 @@ interface ChatModalProps {
   isOpen: boolean;
   onClose: () => void;
   driver: User;
+  currentUser: User;
   rideId: string;
 }
 
-const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, driver, rideId }) => {
+const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, driver, currentUser, rideId }) => {
   const initialConversation = mockConversations.find(c => c.rideId === rideId);
   const [messages, setMessages] = useState<Message[]>(initialConversation?.messages || []);
   const [newMessage, setNewMessage] = useState('');
@@ -28,7 +29,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, driver, rideId }
 
     const userMessage: Message = {
       id: `msg_${Date.now()}`,
-      senderId: 'currentUser',
+      senderId: currentUser.id,
       text: newMessage.trim(),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
@@ -71,28 +72,33 @@ const ChatModal: React.FC<ChatModalProps> = ({ isOpen, onClose, driver, rideId }
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 bg-slate-50 space-y-4">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex items-end gap-2 ${msg.senderId === 'currentUser' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.senderId !== 'currentUser' && (
-                <img src={driver.avatarUrl} className="w-6 h-6 rounded-full" />
-              )}
+          {messages.map((msg) => {
+            const isSentByCurrentUser = msg.senderId === currentUser.id;
+            const sender = isSentByCurrentUser ? currentUser : driver;
+            
+            return (
               <div
-                className={`max-w-xs md:max-w-md p-3 rounded-2xl ${
-                  msg.senderId === 'currentUser'
-                    ? 'bg-indigo-600 text-white rounded-br-lg'
-                    : 'bg-slate-200 text-slate-800 rounded-bl-lg'
-                }`}
+                key={msg.id}
+                className={`flex items-end gap-2 ${isSentByCurrentUser ? 'justify-end' : 'justify-start'}`}
               >
-                <p className="text-sm">{msg.text}</p>
-                <p className={`text-xs mt-1 ${msg.senderId === 'currentUser' ? 'text-indigo-200' : 'text-slate-500'} text-right`}>
-                  {msg.timestamp}
-                </p>
+                {!isSentByCurrentUser && (
+                  <img src={sender.avatarUrl} className="w-6 h-6 rounded-full" />
+                )}
+                <div
+                  className={`max-w-xs md:max-w-md p-3 rounded-2xl ${
+                    isSentByCurrentUser
+                      ? 'bg-indigo-600 text-white rounded-br-lg'
+                      : 'bg-slate-200 text-slate-800 rounded-bl-lg'
+                  }`}
+                >
+                  <p className="text-sm">{msg.text}</p>
+                  <p className={`text-xs mt-1 ${isSentByCurrentUser ? 'text-indigo-200' : 'text-slate-500'} text-right`}>
+                    {msg.timestamp}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
            <div ref={messagesEndRef} />
         </div>
 

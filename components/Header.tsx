@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { User } from '../types';
+import { ArrowDownIcon } from './icons/Icons';
 
 interface HeaderProps {
+  currentUser: User | null;
   onLogoClick: () => void;
+  onLoginClick: () => void;
+  onLogoutClick: () => void;
+  onNavigate: (page: 'landing' | 'results' | 'details' | 'offer' | 'myRides') => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onLogoClick }) => {
+const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick, onLogoutClick, onNavigate }) => {
   return (
     <header className="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50 border-b border-slate-200/70">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,12 +26,34 @@ const Header: React.FC<HeaderProps> = ({ onLogoClick }) => {
             </svg>
             <span className="text-2xl font-bold text-gray-800 tracking-tight">RideLink</span>
           </div>
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Offer a Ride</a>
-            <a href="#" className="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Rides</a>
-            <button className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
-              Log In
-            </button>
+          <nav className="hidden md:flex items-center space-x-6">
+             {currentUser && (
+              <>
+                <a onClick={() => onNavigate('offer')} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors cursor-pointer">Offer a Ride</a>
+                <a onClick={() => onNavigate('myRides')} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors cursor-pointer">My Rides</a>
+              </>
+            )}
+            {currentUser ? (
+              <div className="flex items-center gap-4">
+                 <div className="flex items-center gap-2">
+                    <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-8 h-8 rounded-full border-2 border-indigo-200" />
+                    <span className="font-semibold text-gray-700">{currentUser.name}</span>
+                 </div>
+                 <button 
+                    onClick={onLogoutClick}
+                    className="bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg hover:bg-slate-300 transition-all text-sm"
+                  >
+                  Log Out
+                </button>
+              </div>
+            ) : (
+               <button 
+                onClick={onLoginClick}
+                className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+              >
+                Log In
+              </button>
+            )}
           </nav>
           <button className="md:hidden text-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
