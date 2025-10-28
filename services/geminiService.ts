@@ -1,0 +1,36 @@
+import { GoogleGenAI } from "@google/genai";
+import { Rating } from '../types';
+
+// Per @google/genai guidelines, initialize with process.env.API_KEY directly.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+export const summarizeReviews = async (reviews: Rating[]): Promise<string> => {
+  if (reviews.length === 0) {
+    return "This driver is new and has no reviews yet. Be the first to leave feedback!";
+  }
+
+  const reviewTexts = reviews.map(r => `Rating: ${r.rating}/5 - "${r.comment}"`).join('\n');
+  const prompt = `
+    You are a trust and safety analyst for a carpooling app in India called RideLink.
+    Your task is to summarize the following user reviews for a driver into a concise, professional, and helpful paragraph.
+    Focus on key insights related to safety, driving skill, punctuality, and friendliness.
+    Do not invent information. Base your summary solely on the provided reviews.
+    If reviews are mixed, reflect that in the summary.
+    
+    Here are the reviews:
+    ${reviewTexts}
+
+    Please provide the summary.
+  `;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    return response.text;
+  } catch (error) {
+    console.error("Error calling Gemini API:", error);
+    return "Could not generate an AI summary at this time. Please check the driver's individual reviews.";
+  }
+};
