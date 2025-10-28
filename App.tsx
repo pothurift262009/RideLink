@@ -14,7 +14,9 @@ import PaymentModal from './components/PaymentModal';
 import RatingModal from './components/RatingModal';
 import CancelModal from './components/CancelModal';
 import UserProfile from './components/UserProfile';
+import SupportChat from './components/SupportChat';
 import { calculateTrustScore } from './services/trustScoreService';
+import { SupportIcon } from './components/icons/Icons';
 
 type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile';
 
@@ -37,6 +39,7 @@ const App: React.FC = () => {
   const [isRatingModalOpen, setRatingModalOpen] = useState<boolean>(false);
   const [isCancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
   const [rideToProcess, setRideToProcess] = useState<Ride | null>(null); // For payment, rating, or cancellation
+  const [isSupportChatOpen, setSupportChatOpen] = useState<boolean>(false);
 
   const handleSearch = useCallback((from: string, to: string) => {
     setSearchCriteria({ from, to });
@@ -244,6 +247,8 @@ const App: React.FC = () => {
         {renderPage()}
       </main>
       <Footer />
+      
+      {/* Modals */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setLoginModalOpen(false)}
@@ -286,6 +291,20 @@ const App: React.FC = () => {
           onSubmit={handleAddReview}
         />
       )}
+
+      {/* Support Chat */}
+      <button 
+        onClick={() => setSupportChatOpen(true)}
+        className="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-all transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 z-50"
+        aria-label="Open support chat"
+      >
+        <SupportIcon className="w-6 h-6" />
+      </button>
+
+      <SupportChat 
+        isOpen={isSupportChatOpen}
+        onClose={() => setSupportChatOpen(false)}
+      />
     </div>
   );
 };

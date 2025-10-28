@@ -102,7 +102,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
                                   <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
                               </div>
                           ) : (
-                              <p className="text-gray-700 dark:text-slate-300 leading-relaxed">{aiSummary}</p>
+                              <p className="text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{aiSummary}</p>
                           )}
                       </div>
                   </div>

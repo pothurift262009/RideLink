@@ -84,7 +84,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, allUsers }) => {
                             <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
                         </div>
                         ) : (
-                        <p className="text-gray-700 dark:text-slate-300 text-sm leading-relaxed">{aiSummary}</p>
+                        <p className="text-gray-700 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">{aiSummary}</p>
                         )}
                     </div>
                 </div>
@@ -102,7 +102,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, allUsers }) => {
                   const rater = allUsers.find(u => u.id === review.raterId);
                   return (
                     <div key={review.id} className="flex items-start gap-4 border-b border-slate-200 dark:border-slate-700 pb-6 last:border-b-0 last:pb-0">
-                      <img src={rater?.avatarUrl} alt={rater?.name} className="w-12 h-12 rounded-full" />
+                      <img src={rater?.avatarUrl} alt={rater?.name} className="w-12 h-12 rounded-full object-cover" />
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-1">
                           <p className="font-bold text-slate-800 dark:text-slate-100">{rater?.name}</p>

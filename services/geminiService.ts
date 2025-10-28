@@ -38,3 +38,22 @@ export const summarizeReviews = async (reviews: Rating[]): Promise<string> => {
     return "Could not generate an AI summary at this time. Please check the driver's individual reviews.";
   }
 };
+
+export const getSupportResponse = async (userPrompt: string): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  
+  const prompt = `You are a friendly and knowledgeable support agent for RideLink, an intercity carpooling platform in India. Your goal is to provide helpful, concise, and polite assistance to users. Answer questions about booking rides, offering rides, payments, safety features, and user verification. If you don't know an answer, politely say you need to check with the support team. Keep your answers brief and easy to understand.
+
+User question: "${userPrompt}"`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    return response.text;
+  } catch (error) {
+    console.error("Error calling Gemini API for support:", error);
+    return "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again in a moment.";
+  }
+};
