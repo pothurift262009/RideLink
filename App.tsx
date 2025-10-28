@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Ride, User, Rating } from './types';
 import { mockRides as initialRides, mockUsers as initialUsers } from './data/mockData';
 import LandingPage from './components/LandingPage';
@@ -57,13 +57,29 @@ const App: React.FC = () => {
     setCurrentPage('results');
   }, []);
   
-  const handleNavigate = (page: Page) => {
+  const handleNavigate = useCallback((page: Page) => {
     setSelectedRide(null);
     if (page === 'landing') {
         setSearchResults([]);
     }
     setCurrentPage(page);
-  }
+  }, []);
+
+  // Effect to handle redirects safely after rendering
+  useEffect(() => {
+    const protectedPages: Page[] = ['offer', 'myRides', 'profile'];
+    if (protectedPages.includes(currentPage) && !currentUser) {
+      handleNavigate('landing');
+    }
+
+    if (currentPage === 'details') {
+      const driverExists = users.some(u => u.id === selectedRide?.driverId);
+      if (!selectedRide || !driverExists) {
+        handleBackToResults();
+      }
+    }
+  }, [currentPage, currentUser, selectedRide, users, handleNavigate, handleBackToResults]);
+
 
   const handleLogin = (user: User) => {
     setCurrentUser(user);
@@ -174,7 +190,7 @@ const App: React.FC = () => {
             users={users}
           />
         );
-      case 'details':
+      case 'details': {
         const driver = users.find(u => u.id === selectedRide?.driverId);
         if (selectedRide && driver) {
           return (
@@ -188,38 +204,24 @@ const App: React.FC = () => {
             />
           );
         }
-        handleBackToResults();
-        return null;
+        return null; // Render nothing while useEffect redirects
+      }
       case 'offer':
-        if (currentUser) {
-            return <OfferRide currentUser={currentUser} onAddRide={handleAddRide} />;
-        }
-        // Redirect to landing if not logged in
-        handleNavigate('landing');
-        return null;
+        return currentUser ? <OfferRide currentUser={currentUser} onAddRide={handleAddRide} /> : null;
       case 'myRides':
-        if (currentUser) {
-            return (
-                <MyRides 
-                    currentUser={currentUser} 
-                    allRides={rides} 
-                    bookedRideIds={bookedRideIds}
-                    onSelectRide={handleSelectRide}
-                    users={users}
-                    onRateRide={openRatingModal}
-                    onCancelRide={handleInitiateCancel}
-                />
-            );
-        }
-        // Redirect to landing if not logged in
-        handleNavigate('landing');
-        return null;
+        return currentUser ? (
+            <MyRides 
+                currentUser={currentUser} 
+                allRides={rides} 
+                bookedRideIds={bookedRideIds}
+                onSelectRide={handleSelectRide}
+                users={users}
+                onRateRide={openRatingModal}
+                onCancelRide={handleInitiateCancel}
+            />
+        ) : null;
       case 'profile':
-        if (currentUser) {
-          return <UserProfile user={currentUser} allUsers={users} />;
-        }
-        handleNavigate('landing');
-        return null;
+        return currentUser ? <UserProfile user={currentUser} allUsers={users} /> : null;
       case 'landing':
       default:
         return <LandingPage onSearch={handleSearch} />;
