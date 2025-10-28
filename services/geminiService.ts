@@ -1,13 +1,14 @@
 import { GoogleGenAI } from "@google/genai";
 import { Rating } from '../types';
 
-// Per @google/genai guidelines, initialize with process.env.API_KEY directly.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const summarizeReviews = async (reviews: Rating[]): Promise<string> => {
   if (reviews.length === 0) {
     return "This driver is new and has no reviews yet. Be the first to leave feedback!";
   }
+  
+  // Per @google/genai guidelines, initialize with process.env.API_KEY directly.
+  // Initialization is moved here to prevent app crash on load if API_KEY is not yet available.
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const reviewTexts = reviews.map(r => `Rating: ${r.rating}/5 - "${r.comment}"`).join('\n');
   const prompt = `
@@ -31,6 +32,9 @@ export const summarizeReviews = async (reviews: Rating[]): Promise<string> => {
     return response.text;
   } catch (error) {
     console.error("Error calling Gemini API:", error);
+    if (error instanceof Error && error.message.includes("API Key")) {
+      return "AI summary is currently unavailable due to a configuration issue. Please check individual reviews.";
+    }
     return "Could not generate an AI summary at this time. Please check the driver's individual reviews.";
   }
 };
