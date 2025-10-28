@@ -10,6 +10,6 @@ export default defineConfig({
   preview: {
     port: 5173,
     host: true, // This makes the server accessible externally
-    allowedHosts: ['ridelink-1.onrender.com'],
+    allowedHosts: ['ridelink-1.onrender.com', 'ridelink-3nk4.onrender.com'],
   },
 });
