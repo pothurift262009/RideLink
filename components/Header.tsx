@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { User } from '../types';
-import { ArrowDownIcon } from './icons/Icons';
 
 interface HeaderProps {
   currentUser: User | null;
   onLogoClick: () => void;
   onLoginClick: () => void;
+  onSignUpClick: () => void;
   onLogoutClick: () => void;
   onNavigate: (page: 'landing' | 'results' | 'details' | 'offer' | 'myRides') => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick, onLogoutClick, onNavigate }) => {
+const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick, onSignUpClick, onLogoutClick, onNavigate }) => {
   return (
     <header className="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50 border-b border-slate-200/70">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,12 +47,20 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick,
                 </button>
               </div>
             ) : (
-               <button 
-                onClick={onLoginClick}
-                className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
-              >
-                Log In
-              </button>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={onSignUpClick}
+                  className="bg-slate-100 text-slate-700 font-semibold px-4 py-2 rounded-lg hover:bg-slate-200 transition-all text-sm"
+                >
+                  Sign Up
+                </button>
+                <button 
+                  onClick={onLoginClick}
+                  className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+                >
+                  Log In
+                </button>
+              </div>
             )}
           </nav>
           <button className="md:hidden text-gray-600">

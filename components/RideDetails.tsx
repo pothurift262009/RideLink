@@ -10,7 +10,7 @@ interface RideDetailsProps {
   onBack: () => void;
   currentUser: User | null;
   isBooked: boolean;
-  onBook: (rideId: string) => void;
+  onBook: (ride: Ride) => void;
 }
 
 const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, currentUser, isBooked, onBook }) => {
@@ -34,7 +34,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
   
   const handleBook = () => {
     if (canBook) {
-      onBook(ride.id);
+      onBook(ride);
     }
   }
 

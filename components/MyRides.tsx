@@ -7,9 +7,11 @@ interface MyRidesProps {
   allRides: Ride[];
   bookedRideIds: string[];
   onSelectRide: (ride: Ride) => void;
+  users: User[];
+  onRateRide: (ride: Ride) => void;
 }
 
-const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds, onSelectRide }) => {
+const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds, onSelectRide, users, onRateRide }) => {
   const ridesOffered = allRides.filter(ride => ride.driverId === currentUser.id);
   const ridesBooked = allRides.filter(ride => bookedRideIds.includes(ride.id));
 
@@ -23,7 +25,7 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
         {ridesOffered.length > 0 ? (
           <div className="space-y-6">
             {ridesOffered.map(ride => (
-              <RideCard key={ride.id} ride={ride} onSelectRide={onSelectRide} />
+              <RideCard key={ride.id} ride={ride} onSelectRide={onSelectRide} users={users} />
             ))}
           </div>
         ) : (
@@ -39,9 +41,30 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
         <h2 className="text-2xl font-bold text-gray-800 border-b-2 border-indigo-200 pb-2 mb-6">Rides You've Booked</h2>
         {ridesBooked.length > 0 ? (
           <div className="space-y-6">
-            {ridesBooked.map(ride => (
-              <RideCard key={ride.id} ride={ride} onSelectRide={onSelectRide} />
-            ))}
+            {ridesBooked.map(ride => {
+              const driver = users.find(u => u.id === ride.driverId);
+              const hasRated = driver?.reviews.some(r => r.rideId === ride.id && r.raterId === currentUser.id);
+
+              return (
+                <div key={ride.id} className="bg-white rounded-xl shadow-lg border border-slate-200/80">
+                  <RideCard ride={ride} onSelectRide={onSelectRide} users={users} />
+                  <div className="p-4 bg-slate-50 rounded-b-xl border-t border-slate-200">
+                    {!hasRated ? (
+                      <button
+                        onClick={() => onRateRide(ride)}
+                        className="w-full bg-amber-400 text-amber-900 font-bold px-8 py-2 rounded-lg hover:bg-amber-500 transition-all focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-opacity-50"
+                      >
+                        Rate this Ride
+                      </button>
+                    ) : (
+                      <p className="text-center text-sm text-green-600 font-semibold">
+                        You've already rated this trip. Thanks for your feedback!
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="text-center bg-white p-12 rounded-xl shadow-md border border-slate-200">

@@ -6,9 +6,10 @@ interface LoginModalProps {
   onClose: () => void;
   onLogin: (user: User) => void;
   users: User[];
+  onSignUpClick: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin, users }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin, users, onSignUpClick }) => {
   if (!isOpen) return null;
 
   const handleLogin = (user: User) => {
@@ -40,10 +41,19 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin, users
               <img src={user.avatarUrl} alt={user.name} className="w-12 h-12 rounded-full" />
               <div>
                 <p className="font-semibold text-lg text-slate-700">{user.name}</p>
-                <p className="text-sm text-slate-500">{user.isVerified ? 'Verified Driver' : 'Passenger'}</p>
+                <p className="text-sm text-slate-500">{user.gender === 'Female' ? 'Verified Driver' : 'Passenger'}</p>
               </div>
             </button>
           ))}
+        </div>
+
+        <div className="mt-6 text-center">
+            <p className="text-slate-600">
+                Don't have an account?{' '}
+                <button onClick={onSignUpClick} className="font-semibold text-indigo-600 hover:underline">
+                    Sign Up
+                </button>
+            </p>
         </div>
       </div>
     </div>

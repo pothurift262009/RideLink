@@ -12,6 +12,8 @@ export enum VerificationType {
 export interface User {
   id: string;
   name: string;
+  email: string;
+  password?: string; // Made optional for existing mock data
   avatarUrl: string;
   gender: Gender;
   verificationType: VerificationType;
@@ -39,6 +41,7 @@ export interface Ride {
 
 export interface Rating {
   id: string;
+  rideId: string;
   raterId: string;
   rating: number; // 1-5
   comment: string;

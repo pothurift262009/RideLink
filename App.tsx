@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Ride, User } from './types';
-import { mockRides as initialRides, mockUsers } from './data/mockData';
+import { Ride, User, Rating } from './types';
+import { mockRides as initialRides, mockUsers as initialUsers } from './data/mockData';
 import LandingPage from './components/LandingPage';
 import SearchResults from './components/SearchResults';
 import RideDetails from './components/RideDetails';
@@ -9,12 +9,16 @@ import Footer from './components/Footer';
 import LoginModal from './components/LoginModal';
 import OfferRide from './components/OfferRide';
 import MyRides from './components/MyRides';
+import SignUpModal from './components/SignUpModal';
+import PaymentModal from './components/PaymentModal';
+import RatingModal from './components/RatingModal';
 
 type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
   const [rides, setRides] = useState<Ride[]>(initialRides);
+  const [users, setUsers] = useState<User[]>(initialUsers);
   const [searchResults, setSearchResults] = useState<Ride[]>([]);
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const [searchCriteria, setSearchCriteria] = useState({ from: '', to: '' });
@@ -22,7 +26,13 @@ const App: React.FC = () => {
   // Auth State
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoginModalOpen, setLoginModalOpen] = useState<boolean>(false);
+  const [isSignUpModalOpen, setSignUpModalOpen] = useState<boolean>(false);
   const [bookedRideIds, setBookedRideIds] = useState<string[]>([]);
+
+  // Modal States
+  const [isPaymentModalOpen, setPaymentModalOpen] = useState<boolean>(false);
+  const [isRatingModalOpen, setRatingModalOpen] = useState<boolean>(false);
+  const [rideToProcess, setRideToProcess] = useState<Ride | null>(null); // For payment or rating
 
   const handleSearch = useCallback((from: string, to: string) => {
     setSearchCriteria({ from, to });
@@ -62,14 +72,73 @@ const App: React.FC = () => {
     handleNavigate('landing');
   };
 
-  const handleBookRide = useCallback((rideId: string) => {
+  const handleSignUp = (newUser: Omit<User, 'id' | 'avatarUrl' | 'trustScore' | 'reviews'>) => {
+    const user: User = {
+        ...newUser,
+        id: `user_${Date.now()}`,
+        avatarUrl: `https://picsum.photos/seed/${newUser.name.split(' ')[0]}/200/200`,
+        trustScore: 3.0, // Start with a neutral score
+        reviews: []
+    };
+    setUsers(prev => [...prev, user]);
+    setCurrentUser(user);
+    setSignUpModalOpen(false);
+  }
+
+  const handleInitiateBooking = useCallback((ride: Ride) => {
+    setRideToProcess(ride);
+    setPaymentModalOpen(true);
+  }, []);
+  
+  const handleConfirmPayment = useCallback((rideId: string) => {
     setBookedRideIds(prev => [...prev, rideId]);
+    setPaymentModalOpen(false);
+    setRideToProcess(null);
   }, []);
   
   const handleAddRide = (newRide: Ride) => {
     setRides(prev => [newRide, ...prev]);
     handleNavigate('myRides');
   };
+
+  const handleAddReview = (ride: Ride, rating: number, comment: string) => {
+    if (!currentUser) return;
+    const newReview: Rating = {
+      id: `review_${Date.now()}`,
+      rideId: ride.id,
+      raterId: currentUser.id,
+      rating,
+      comment,
+    };
+
+    setUsers(prevUsers => prevUsers.map(user => {
+      if (user.id === ride.driverId) {
+        return {
+          ...user,
+          reviews: [...user.reviews, newReview],
+        };
+      }
+      return user;
+    }));
+
+    setRatingModalOpen(false);
+    setRideToProcess(null);
+  };
+
+  const openRatingModal = (ride: Ride) => {
+    setRideToProcess(ride);
+    setRatingModalOpen(true);
+  }
+  
+  const openLoginModal = () => {
+    setSignUpModalOpen(false);
+    setLoginModalOpen(true);
+  };
+  
+  const openSignUpModal = () => {
+    setLoginModalOpen(false);
+    setSignUpModalOpen(true);
+  }
 
   const renderPage = () => {
     switch (currentPage) {
@@ -79,10 +148,11 @@ const App: React.FC = () => {
             rides={searchResults}
             onSelectRide={handleSelectRide}
             searchCriteria={searchCriteria}
+            users={users}
           />
         );
       case 'details':
-        const driver = mockUsers.find(u => u.id === selectedRide?.driverId);
+        const driver = users.find(u => u.id === selectedRide?.driverId);
         if (selectedRide && driver) {
           return (
             <RideDetails 
@@ -91,7 +161,7 @@ const App: React.FC = () => {
               onBack={handleBackToResults}
               currentUser={currentUser}
               isBooked={bookedRideIds.includes(selectedRide.id)}
-              onBook={handleBookRide} 
+              onBook={handleInitiateBooking} 
             />
           );
         }
@@ -112,6 +182,8 @@ const App: React.FC = () => {
                     allRides={rides} 
                     bookedRideIds={bookedRideIds}
                     onSelectRide={handleSelectRide}
+                    users={users}
+                    onRateRide={openRatingModal}
                 />
             );
         }
@@ -124,12 +196,15 @@ const App: React.FC = () => {
     }
   };
 
+  const rideToProcessDriver = users.find(u => u.id === rideToProcess?.driverId);
+
   return (
     <div className="bg-slate-50 min-h-screen flex flex-col">
       <Header 
         currentUser={currentUser}
         onLogoClick={() => handleNavigate('landing')}
-        onLoginClick={() => setLoginModalOpen(true)}
+        onLoginClick={openLoginModal}
+        onSignUpClick={openSignUpModal}
         onLogoutClick={handleLogout}
         onNavigate={handleNavigate}
       />
@@ -141,8 +216,34 @@ const App: React.FC = () => {
         isOpen={isLoginModalOpen}
         onClose={() => setLoginModalOpen(false)}
         onLogin={handleLogin}
-        users={mockUsers}
+        users={users}
+        onSignUpClick={openSignUpModal}
       />
+       <SignUpModal
+        isOpen={isSignUpModalOpen}
+        onClose={() => setSignUpModalOpen(false)}
+        onSignUp={handleSignUp}
+        onLoginClick={openLoginModal}
+      />
+      {rideToProcess && rideToProcessDriver && (
+        <PaymentModal
+          isOpen={isPaymentModalOpen}
+          onClose={() => setPaymentModalOpen(false)}
+          ride={rideToProcess}
+          driver={rideToProcessDriver}
+          onConfirmPayment={handleConfirmPayment}
+        />
+      )}
+      {rideToProcess && rideToProcessDriver && currentUser && (
+         <RatingModal
+          isOpen={isRatingModalOpen}
+          onClose={() => setRatingModalOpen(false)}
+          ride={rideToProcess}
+          driver={rideToProcessDriver}
+          currentUser={currentUser}
+          onSubmit={handleAddReview}
+        />
+      )}
     </div>
   );
 };

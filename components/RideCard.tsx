@@ -1,15 +1,15 @@
 import React from 'react';
-import { Ride } from '../types';
-import { mockUsers } from '../data/mockData';
+import { Ride, User } from '../types';
 import { ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, UsersIcon, CarIcon } from './icons/Icons';
 
 interface RideCardProps {
   ride: Ride;
   onSelectRide: (ride: Ride) => void;
+  users: User[];
 }
 
-const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide }) => {
-  const driver = mockUsers.find(u => u.id === ride.driverId);
+const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
+  const driver = users.find(u => u.id === ride.driverId);
 
   if (!driver) return null;
 

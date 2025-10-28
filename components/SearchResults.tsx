@@ -1,15 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { Ride, User, Gender } from '../types';
 import RideCard from './RideCard';
-import { mockUsers } from '../data/mockData';
 
 interface SearchResultsProps {
   rides: Ride[];
   onSelectRide: (ride: Ride) => void;
   searchCriteria: { from: string; to: string };
+  users: User[];
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, searchCriteria }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, searchCriteria, users }) => {
   const [womenOnly, setWomenOnly] = useState(false);
 
   const filteredRides = useMemo(() => {
@@ -17,10 +17,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
       return rides;
     }
     return rides.filter(ride => {
-      const driver = mockUsers.find(u => u.id === ride.driverId);
+      const driver = users.find(u => u.id === ride.driverId);
       return driver?.gender === Gender.Female;
     });
-  }, [rides, womenOnly]);
+  }, [rides, womenOnly, users]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
@@ -53,7 +53,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
         {filteredRides.length > 0 ? (
           <div className="space-y-6">
             {filteredRides.map(ride => (
-              <RideCard key={ride.id} ride={ride} onSelectRide={onSelectRide} />
+              <RideCard key={ride.id} ride={ride} onSelectRide={onSelectRide} users={users} />
             ))}
           </div>
         ) : (
