@@ -21,17 +21,19 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
       {/* Driver Info Panel */}
       <div className="w-1/3 lg:w-1/4 p-4 flex flex-col items-center justify-center bg-slate-50/70 text-center border-r border-slate-200">
         <img src={driver.avatarUrl} alt={driver.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-full border-4 border-white shadow-md mb-2" />
-        <h4 className="font-bold text-lg text-slate-800 leading-tight">{driver.name}</h4>
+        <div className="flex items-center gap-2">
+          <h4 className="font-bold text-lg text-slate-800 leading-tight">{driver.name}</h4>
+          {driver.isVerified && (
+              // FIX: Wrapped the icon in a span to apply the title attribute, resolving the prop type error.
+              <span title="Verified User">
+                <ShieldCheckIcon className="w-5 h-5 text-green-600" />
+              </span>
+          )}
+        </div>
         <div className="flex items-center gap-1 text-amber-500 mt-1">
             <StarIcon className="w-5 h-5"/>
             <span className="font-bold text-base text-slate-700">{driver.trustScore.toFixed(1)}</span>
         </div>
-         {driver.isVerified && (
-            <div className="flex items-center gap-1.5 text-xs text-green-600 font-semibold mt-2 bg-green-100/70 px-2 py-1 rounded-full">
-              <ShieldCheckIcon className="w-4 h-4"/>
-              <span>Verified</span>
-            </div>
-        )}
       </div>
 
       {/* Ride & Price Info */}

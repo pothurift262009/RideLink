@@ -12,6 +12,8 @@ import MyRides from './components/MyRides';
 import SignUpModal from './components/SignUpModal';
 import PaymentModal from './components/PaymentModal';
 import RatingModal from './components/RatingModal';
+import CancelModal from './components/CancelModal';
+import { calculateTrustScore } from './services/trustScoreService';
 
 type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides';
 
@@ -32,7 +34,8 @@ const App: React.FC = () => {
   // Modal States
   const [isPaymentModalOpen, setPaymentModalOpen] = useState<boolean>(false);
   const [isRatingModalOpen, setRatingModalOpen] = useState<boolean>(false);
-  const [rideToProcess, setRideToProcess] = useState<Ride | null>(null); // For payment or rating
+  const [isCancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
+  const [rideToProcess, setRideToProcess] = useState<Ride | null>(null); // For payment, rating, or cancellation
 
   const handleSearch = useCallback((from: string, to: string) => {
     setSearchCriteria({ from, to });
@@ -92,7 +95,23 @@ const App: React.FC = () => {
   
   const handleConfirmPayment = useCallback((rideId: string) => {
     setBookedRideIds(prev => [...prev, rideId]);
+    // The modal now handles its own closure via user action
+  }, []);
+
+  const handleGoToMyRides = () => {
     setPaymentModalOpen(false);
+    setRideToProcess(null);
+    handleNavigate('myRides');
+  };
+
+  const handleInitiateCancel = useCallback((ride: Ride) => {
+    setRideToProcess(ride);
+    setCancelModalOpen(true);
+  }, []);
+
+  const handleConfirmCancel = useCallback((rideId: string) => {
+    setBookedRideIds(prev => prev.filter(id => id !== rideId));
+    setCancelModalOpen(false);
     setRideToProcess(null);
   }, []);
   
@@ -113,9 +132,12 @@ const App: React.FC = () => {
 
     setUsers(prevUsers => prevUsers.map(user => {
       if (user.id === ride.driverId) {
+        const updatedReviews = [...user.reviews, newReview];
+        const newTrustScore = calculateTrustScore(updatedReviews);
         return {
           ...user,
-          reviews: [...user.reviews, newReview],
+          reviews: updatedReviews,
+          trustScore: newTrustScore,
         };
       }
       return user;
@@ -184,6 +206,7 @@ const App: React.FC = () => {
                     onSelectRide={handleSelectRide}
                     users={users}
                     onRateRide={openRatingModal}
+                    onCancelRide={handleInitiateCancel}
                 />
             );
         }
@@ -226,18 +249,28 @@ const App: React.FC = () => {
         onLoginClick={openLoginModal}
       />
       {rideToProcess && rideToProcessDriver && (
-        <PaymentModal
-          isOpen={isPaymentModalOpen}
-          onClose={() => setPaymentModalOpen(false)}
-          ride={rideToProcess}
-          driver={rideToProcessDriver}
-          onConfirmPayment={handleConfirmPayment}
-        />
+        <>
+          <PaymentModal
+            isOpen={isPaymentModalOpen}
+            onClose={() => { setPaymentModalOpen(false); setRideToProcess(null); }}
+            ride={rideToProcess}
+            driver={rideToProcessDriver}
+            onConfirmPayment={handleConfirmPayment}
+            onGoToMyRides={handleGoToMyRides}
+          />
+          <CancelModal
+            isOpen={isCancelModalOpen}
+            onClose={() => { setCancelModalOpen(false); setRideToProcess(null); }}
+            ride={rideToProcess}
+            driver={rideToProcessDriver}
+            onConfirmCancel={handleConfirmCancel}
+          />
+        </>
       )}
       {rideToProcess && rideToProcessDriver && currentUser && (
          <RatingModal
           isOpen={isRatingModalOpen}
-          onClose={() => setRatingModalOpen(false)}
+          onClose={() => { setRatingModalOpen(false); setRideToProcess(null); }}
           ride={rideToProcess}
           driver={rideToProcessDriver}
           currentUser={currentUser}

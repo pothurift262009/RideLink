@@ -73,13 +73,15 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
             <div className="flex flex-col md:flex-row gap-8 mb-8">
               <div className="md:w-1/3 flex flex-col items-center text-center">
                 <img src={driver.avatarUrl} alt={driver.name} className="w-24 h-24 rounded-full border-4 border-gray-200 mb-4" />
-                <h3 className="text-xl font-bold text-gray-800">{driver.name}</h3>
-                {driver.isVerified && (
-                    <div className="flex items-center gap-1 text-green-600 font-semibold mt-1">
-                      <ShieldCheckIcon className="w-5 h-5"/>
-                      <span>{driver.verificationType} Verified</span>
-                    </div>
-                )}
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-xl font-bold text-gray-800">{driver.name}</h3>
+                  {driver.isVerified && (
+                      <div className="flex items-center gap-1.5 text-xs text-green-700 font-semibold bg-green-100 px-2.5 py-1 rounded-full">
+                        <ShieldCheckIcon className="w-4 h-4"/>
+                        <span>{driver.verificationType} Verified</span>
+                      </div>
+                  )}
+                </div>
                 <div className="flex items-center gap-1 text-amber-600 mt-1">
                       <StarIcon className="w-5 h-5"/>
                       <span className="font-bold text-base">{driver.trustScore.toFixed(1)} Trust Score</span>

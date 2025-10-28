@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Ride, User } from '../types';
-import { CreditCardIcon, CurrencyRupeeIcon, ShieldCheckIcon } from './icons/Icons';
+import { CreditCardIcon, CurrencyRupeeIcon, CheckCircleIcon, TicketIcon } from './icons/Icons';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -8,9 +8,10 @@ interface PaymentModalProps {
   ride: Ride;
   driver: User;
   onConfirmPayment: (rideId: string) => void;
+  onGoToMyRides: () => void;
 }
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driver, onConfirmPayment }) => {
+const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driver, onConfirmPayment, onGoToMyRides }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
 
@@ -19,12 +20,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
     setIsProcessing(true);
     // Simulate API call to payment gateway
     await new Promise(resolve => setTimeout(resolve, 2000));
+    onConfirmPayment(ride.id);
     setIsProcessing(false);
     setIsPaid(true);
-    // Wait a bit on the success screen before closing and confirming
+  };
+
+  const handleClose = () => {
+    onClose();
+    // Delay state reset to allow for closing animation
     setTimeout(() => {
-      onConfirmPayment(ride.id);
-    }, 1500);
+      setIsPaid(false);
+      setIsProcessing(false);
+    }, 300);
   };
 
   if (!isOpen) return null;
@@ -32,22 +39,45 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
   return (
     <div 
       className="fixed inset-0 bg-black/60 z-[100] flex justify-center items-center p-4"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <div 
         className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all p-8"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-slate-800">Confirm and Pay</h2>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-800 text-3xl">&times;</button>
-        </div>
+        {!isPaid && (
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-slate-800">Confirm and Pay</h2>
+            <button onClick={handleClose} className="text-slate-500 hover:text-slate-800 text-3xl">&times;</button>
+          </div>
+        )}
 
         {isPaid ? (
-            <div className="text-center py-10">
-                <ShieldCheckIcon className="w-16 h-16 text-green-500 mx-auto animate-pulse" />
-                <h3 className="text-2xl font-bold text-green-600 mt-4">Payment Successful!</h3>
-                <p className="text-slate-600 mt-2">Your ride is confirmed. You'll be redirected shortly.</p>
+            <div className="text-center py-6">
+                <CheckCircleIcon className="w-20 h-20 text-green-500 mx-auto animate-pulse" />
+                <h3 className="text-3xl font-bold text-green-600 mt-4">Ride Booked!</h3>
+                <p className="text-slate-600 mt-2 mb-6">Your trip from {ride.from} to {ride.to} is confirmed.</p>
+                
+                <div className="bg-slate-100 rounded-lg p-4 text-left mb-8 border border-slate-200">
+                    <p className="font-semibold text-slate-800">Driver: <span className="font-normal">{driver.name}</span></p>
+                    <p className="font-semibold text-slate-800">Date: <span className="font-normal">{new Date(ride.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></p>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                    <button 
+                        onClick={onGoToMyRides}
+                        className="w-full flex justify-center items-center gap-2 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-all"
+                    >
+                        <TicketIcon className="w-5 h-5" />
+                        View My Rides
+                    </button>
+                    <button
+                        onClick={handleClose}
+                        className="w-full text-slate-600 font-semibold py-2 rounded-lg hover:bg-slate-100 transition-all"
+                    >
+                        Close
+                    </button>
+                </div>
             </div>
         ) : (
             <>
@@ -76,17 +106,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
                                 placeholder="0000 0000 0000 0000"
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 required
+                                defaultValue="4242 4242 4242 4242"
                             />
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="expiry" className="block text-sm font-medium text-gray-700 mb-1">Expiry</label>
-                            <input id="expiry" type="text" placeholder="MM / YY" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required />
+                            <input id="expiry" type="text" placeholder="MM / YY" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required defaultValue="12 / 28"/>
                         </div>
                         <div>
                             <label htmlFor="cvc" className="block text-sm font-medium text-gray-700 mb-1">CVC</label>
-                            <input id="cvc" type="text" placeholder="123" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required />
+                            <input id="cvc" type="text" placeholder="123" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required defaultValue="123"/>
                         </div>
                     </div>
 

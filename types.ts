@@ -27,6 +27,7 @@ export interface Ride {
   driverId: string;
   from: string;
   to: string;
+  departureDate: string;
   departureTime: string;
   estimatedArrivalTime: string;
   pricePerSeat: number;

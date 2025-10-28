@@ -77,12 +77,29 @@ export const mockUsers: User[] = [
   },
 ];
 
+// Helper for dates
+const d = new Date();
+const tomorrow = new Date(d);
+tomorrow.setDate(d.getDate() + 1);
+const nextWeek = new Date(d);
+nextWeek.setDate(d.getDate() + 7);
+const twoDaysFromNow = new Date(d);
+twoDaysFromNow.setDate(d.getDate() + 2);
+
+const yesterday = new Date(d);
+yesterday.setDate(d.getDate() - 1);
+const lastWeek = new Date(d);
+lastWeek.setDate(d.getDate() - 7);
+
+const toYyyyMmDd = (date: Date) => date.toISOString().split('T')[0];
+
 export const mockRides: Ride[] = [
   {
     id: 'ride_1',
     driverId: 'user_1',
     from: 'Chennai',
     to: 'Bangalore',
+    departureDate: toYyyyMmDd(tomorrow),
     departureTime: '06:00 AM',
     estimatedArrivalTime: '12:00 PM',
     pricePerSeat: 850,
@@ -94,6 +111,7 @@ export const mockRides: Ride[] = [
     driverId: 'user_2',
     from: 'Chennai',
     to: 'Bangalore',
+    departureDate: toYyyyMmDd(yesterday),
     departureTime: '07:30 AM',
     estimatedArrivalTime: '01:30 PM',
     pricePerSeat: 800,
@@ -105,6 +123,7 @@ export const mockRides: Ride[] = [
     driverId: 'user_3',
     from: 'Chennai',
     to: 'Bangalore',
+    departureDate: toYyyyMmDd(nextWeek),
     departureTime: '09:00 AM',
     estimatedArrivalTime: '03:00 PM',
     pricePerSeat: 900,
@@ -116,6 +135,7 @@ export const mockRides: Ride[] = [
     driverId: 'user_4',
     from: 'Chennai',
     to: 'Bangalore',
+    departureDate: toYyyyMmDd(lastWeek),
     departureTime: '05:00 AM',
     estimatedArrivalTime: '11:00 AM',
     pricePerSeat: 750,
@@ -127,6 +147,7 @@ export const mockRides: Ride[] = [
     driverId: 'user_1',
     from: 'Bangalore',
     to: 'Chennai',
+    departureDate: toYyyyMmDd(twoDaysFromNow),
     departureTime: '04:00 PM',
     estimatedArrivalTime: '10:00 PM',
     pricePerSeat: 850,

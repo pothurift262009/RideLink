@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { User, Ride } from '../types';
-// Fix: Import IconProps to correctly type the icon prop in FormInputProps.
-import { ClockIcon, CurrencyRupeeIcon, UsersIcon, type IconProps } from './icons/Icons';
+import { ClockIcon, CurrencyRupeeIcon, UsersIcon, CalendarIcon, type IconProps } from './icons/Icons';
 
 interface OfferRideProps {
   currentUser: User;
@@ -11,6 +10,7 @@ interface OfferRideProps {
 const OfferRide: React.FC<OfferRideProps> = ({ currentUser, onAddRide }) => {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [departureDate, setDepartureDate] = useState('');
   const [departureTime, setDepartureTime] = useState('');
   const [estimatedArrivalTime, setEstimatedArrivalTime] = useState('');
   const [pricePerSeat, setPricePerSeat] = useState('');
@@ -18,7 +18,7 @@ const OfferRide: React.FC<OfferRideProps> = ({ currentUser, onAddRide }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!from || !to || !departureTime || !estimatedArrivalTime || !pricePerSeat || !availableSeats) {
+    if (!from || !to || !departureDate || !departureTime || !estimatedArrivalTime || !pricePerSeat || !availableSeats) {
         alert("Please fill in all fields.");
         return;
     }
@@ -28,6 +28,7 @@ const OfferRide: React.FC<OfferRideProps> = ({ currentUser, onAddRide }) => {
         driverId: currentUser.id,
         from,
         to,
+        departureDate,
         departureTime,
         estimatedArrivalTime,
         pricePerSeat: parseInt(pricePerSeat, 10),
@@ -53,6 +54,9 @@ const OfferRide: React.FC<OfferRideProps> = ({ currentUser, onAddRide }) => {
             <FormInput id="from" label="Leaving from" value={from} onChange={setFrom} placeholder="e.g., Chennai" />
             <FormInput id="to" label="Going to" value={to} onChange={setTo} placeholder="e.g., Bangalore" />
         </div>
+        
+        <FormInput id="date" type="date" label="Departure Date" value={departureDate} onChange={setDepartureDate} icon={<CalendarIcon />} />
+        
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormInput id="departureTime" label="Departure Time" value={departureTime} onChange={setDepartureTime} placeholder="e.g., 08:00 AM" icon={<ClockIcon />} />
             <FormInput id="estimatedArrivalTime" label="Est. Arrival Time" value={estimatedArrivalTime} onChange={setEstimatedArrivalTime} placeholder="e.g., 02:00 PM" icon={<ClockIcon />} />
@@ -80,7 +84,6 @@ interface FormInputProps {
     onChange: (value: string) => void;
     placeholder?: string;
     type?: string;
-    // Fix: Use a more specific type for the icon prop to allow passing className in React.cloneElement.
     icon?: React.ReactElement<IconProps>;
 }
 
