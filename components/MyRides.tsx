@@ -29,23 +29,23 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold text-gray-900 mb-8">My Rides</h1>
+      <h1 className="text-4xl font-bold text-gray-900 dark:text-slate-100 mb-8">My Rides</h1>
 
       {/* Upcoming Rides */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-800 border-b-2 border-indigo-200 pb-2 mb-6">Upcoming Rides</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-200 border-b-2 border-indigo-200 dark:border-indigo-800 pb-2 mb-6">Upcoming Rides</h2>
         {upcomingRides.length > 0 ? (
           <div className="space-y-6">
             {upcomingRides.map(ride => {
               const isBooked = bookedRideIds.includes(ride.id);
               return (
-                <div key={ride.id} className="bg-white rounded-xl shadow-lg border border-slate-200/80">
+                <div key={ride.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200/80 dark:border-slate-700">
                   <RideCard ride={ride} onSelectRide={onSelectRide} users={users} />
                   {isBooked && (
-                    <div className="p-4 bg-slate-50/70 rounded-b-xl border-t border-slate-200 flex items-center gap-4">
+                    <div className="p-4 bg-slate-50/70 dark:bg-slate-900/50 rounded-b-xl border-t border-slate-200 dark:border-slate-700 flex items-center gap-4">
                        <button
                         onClick={() => onCancelRide(ride)}
-                        className="flex-1 text-red-600 font-semibold px-6 py-2 rounded-lg hover:bg-red-50 ring-1 ring-inset ring-red-200 hover:ring-red-300 transition-all"
+                        className="flex-1 text-red-600 dark:text-red-400 font-semibold px-6 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 ring-1 ring-inset ring-red-200 dark:ring-red-500/30 hover:ring-red-300 dark:hover:ring-red-500/40 transition-all"
                       >
                         Cancel Ride
                       </button>
@@ -56,16 +56,16 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
             })}
           </div>
         ) : (
-          <div className="text-center bg-white p-12 rounded-xl shadow-md border border-slate-200">
-            <h3 className="text-xl font-semibold text-gray-700">You have no upcoming rides.</h3>
-            <p className="text-gray-500 mt-2">Book a new trip or offer a ride to see it here.</p>
+          <div className="text-center bg-white dark:bg-slate-800 p-12 rounded-xl shadow-md border border-slate-200 dark:border-slate-700">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-slate-200">You have no upcoming rides.</h3>
+            <p className="text-gray-500 dark:text-slate-400 mt-2">Book a new trip or offer a ride to see it here.</p>
           </div>
         )}
       </section>
 
       {/* Trip History */}
       <section>
-        <h2 className="text-2xl font-bold text-gray-800 border-b-2 border-indigo-200 pb-2 mb-6">Trip History</h2>
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-200 border-b-2 border-indigo-200 dark:border-indigo-800 pb-2 mb-6">Trip History</h2>
         {pastRides.length > 0 ? (
           <div className="space-y-4">
             {pastRides.map(ride => {
@@ -76,16 +76,16 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
               const hasRated = driver.reviews.some(r => r.rideId === ride.id && r.raterId === currentUser.id);
 
               return (
-                <div key={ride.id} className="bg-white p-4 rounded-xl shadow-md border border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div key={ride.id} className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
-                       <p className="font-bold text-lg text-slate-800">{ride.from} → {ride.to}</p>
-                       <span className="flex items-center gap-1.5 text-xs text-green-700 font-semibold bg-green-100 px-2.5 py-1 rounded-full">
+                       <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{ride.from} → {ride.to}</p>
+                       <span className="flex items-center gap-1.5 text-xs text-green-700 dark:text-green-300 font-semibold bg-green-100 dark:bg-green-500/20 px-2.5 py-1 rounded-full">
                           <CheckCircleIcon className="w-4 h-4"/>
                           Completed
                        </span>
                     </div>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
                       On {new Date(ride.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                       {isBookedByCurrentUser ? ` with ${driver.name}` : ' (You were the driver)'}
                     </p>
@@ -100,7 +100,7 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
                           Rate Ride
                         </button>
                       ) : (
-                        <p className="text-sm text-green-600 font-semibold">
+                        <p className="text-sm text-green-600 dark:text-green-400 font-semibold">
                           Feedback submitted
                         </p>
                       )
@@ -111,9 +111,9 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
             })}
           </div>
         ) : (
-           <div className="text-center bg-white p-12 rounded-xl shadow-md border border-slate-200">
-            <h3 className="text-xl font-semibold text-gray-700">No past rides yet.</h3>
-            <p className="text-gray-500 mt-2">Your completed trips will appear here.</p>
+           <div className="text-center bg-white dark:bg-slate-800 p-12 rounded-xl shadow-md border border-slate-200 dark:border-slate-700">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-slate-200">No past rides yet.</h3>
+            <p className="text-gray-500 dark:text-slate-400 mt-2">Your completed trips will appear here.</p>
           </div>
         )}
       </section>

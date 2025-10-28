@@ -97,8 +97,8 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
         case 'initial':
             return (
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-slate-700">Aadhaar Verification</h3>
-                    <p className="text-sm text-slate-500">Enter your 12-digit Aadhaar number. We'll send an OTP to your registered mobile number.</p>
+                    <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Aadhaar Verification</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Enter your 12-digit Aadhaar number. We'll send an OTP to your registered mobile number.</p>
                     <FormInput 
                         id="aadhaar" 
                         label="Aadhaar Number" 
@@ -121,14 +121,14 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
              return (
                 <div className="text-center py-10">
                     <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
-                    <p className="mt-4 text-slate-600">Processing...</p>
+                    <p className="mt-4 text-slate-600 dark:text-slate-300">Processing...</p>
                 </div>
              );
         case 'otp':
             return (
                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-slate-700">Enter OTP</h3>
-                    <p className="text-sm text-slate-500">An OTP has been sent to your Aadhaar-registered mobile number.</p>
+                    <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200">Enter OTP</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">An OTP has been sent to your Aadhaar-registered mobile number.</p>
                     <FormInput 
                         id="otp" 
                         label="One-Time Password" 
@@ -149,7 +149,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
             );
         case 'success':
             return (
-                <div className="text-center p-4 bg-green-50 text-green-700 rounded-lg">
+                <div className="text-center p-4 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-300 rounded-lg">
                     <p className="font-bold flex items-center justify-center gap-2"><ShieldCheckIcon className="w-5 h-5"/> Aadhaar Verified Successfully!</p>
                 </div>
             );
@@ -161,8 +161,8 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
           case 'initial':
               return (
                   <div className="space-y-4 text-center">
-                      <h3 className="text-lg font-semibold text-slate-700">LinkedIn Verification</h3>
-                      <p className="text-sm text-slate-500">Connect your LinkedIn account to verify your professional identity.</p>
+                      <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200">LinkedIn Verification</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Connect your LinkedIn account to verify your professional identity.</p>
                       <button 
                           onClick={handleConnectLinkedIn} 
                           className="w-full flex justify-center items-center gap-3 bg-[#0077B5] text-white font-bold py-3 rounded-lg hover:bg-[#006097] transition-all"
@@ -176,12 +176,12 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
               return (
                   <div className="text-center py-10">
                       <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
-                      <p className="mt-4 text-slate-600">Redirecting to LinkedIn...</p>
+                      <p className="mt-4 text-slate-600 dark:text-slate-300">Redirecting to LinkedIn...</p>
                   </div>
               );
           case 'success':
               return (
-                  <div className="text-center p-4 bg-green-50 text-green-700 rounded-lg">
+                  <div className="text-center p-4 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-300 rounded-lg">
                       <p className="font-bold flex items-center justify-center gap-2"><LinkedInIcon className="w-5 h-5"/> LinkedIn Connected Successfully!</p>
                   </div>
               );
@@ -194,12 +194,12 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
       onClick={handleCloseAndReset}
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all p-8"
+        className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md transform transition-all p-8"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-slate-800">Create Your Account</h2>
-          <button onClick={handleCloseAndReset} className="text-slate-500 hover:text-slate-800 text-3xl">&times;</button>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Create Your Account</h2>
+          <button onClick={handleCloseAndReset} className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-3xl">&times;</button>
         </div>
 
         {step === 1 && (
@@ -209,8 +209,8 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
                 <FormInput id="password" label="Password" type="password" value={password} onChange={setPassword} required />
                 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                    <select value={gender} onChange={(e) => setGender(e.target.value as Gender)} className="w-full py-2 px-3 border border-gray-300 rounded-lg">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Gender</label>
+                    <select value={gender} onChange={(e) => setGender(e.target.value as Gender)} className="w-full py-2 px-3 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg">
                         <option value={Gender.Female}>Female</option>
                         <option value={Gender.Male}>Male</option>
                         <option value={Gender.Other}>Other</option>
@@ -218,8 +218,8 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
                 </div>
                 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Verification Method</label>
-                    <select value={verificationType} onChange={(e) => handleVerificationTypeChange(e.target.value as VerificationType)} className="w-full py-2 px-3 border border-gray-300 rounded-lg">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Verification Method</label>
+                    <select value={verificationType} onChange={(e) => handleVerificationTypeChange(e.target.value as VerificationType)} className="w-full py-2 px-3 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg">
                         <option value={VerificationType.Aadhaar}>Aadhaar</option>
                         <option value={VerificationType.LinkedIn}>LinkedIn</option>
                     </select>
@@ -233,7 +233,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
 
         {step === 2 && (
              <div className="space-y-4">
-                <button onClick={handleGoBackToDetails} className="text-sm text-indigo-600 hover:underline">← Back to details</button>
+                <button onClick={handleGoBackToDetails} className="text-sm text-indigo-600 hover:underline dark:text-indigo-400">← Back to details</button>
                 
                 {verificationType === VerificationType.Aadhaar && renderAadhaarFlow()}
                 {verificationType === VerificationType.LinkedIn && renderLinkedInFlow()}
@@ -241,7 +241,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
                 <button 
                     onClick={handleCreateAccount} 
                     disabled={!isVerified}
-                    className="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-all disabled:bg-indigo-300 mt-4"
+                    className="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-all disabled:bg-indigo-300 dark:disabled:bg-indigo-800 mt-4"
                 >
                     Create Account
                 </button>
@@ -249,9 +249,9 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
         )}
 
         <div className="mt-6 text-center">
-            <p className="text-slate-600">
+            <p className="text-slate-600 dark:text-slate-300">
                 Already have an account?{' '}
-                <button onClick={onLoginClick} className="font-semibold text-indigo-600 hover:underline">
+                <button onClick={onLoginClick} className="font-semibold text-indigo-600 hover:underline dark:text-indigo-400">
                     Log In
                 </button>
             </p>
@@ -272,7 +272,7 @@ const FormInput: React.FC<{
     placeholder?: string;
 }> = ({ id, label, value, onChange, type = 'text', required = false, maxLength, placeholder }) => (
     <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{label}</label>
         <input
             id={id}
             type={type}
@@ -281,7 +281,7 @@ const FormInput: React.FC<{
             required={required}
             maxLength={maxLength}
             placeholder={placeholder}
-            className="w-full py-2 px-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+            className="w-full py-2 px-3 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
         />
     </div>
 );

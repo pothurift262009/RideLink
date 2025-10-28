@@ -16,13 +16,13 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
   return (
     <div 
       onClick={() => onSelectRide(ride)}
-      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-200/80 hover:border-indigo-400 overflow-hidden flex transform hover:-translate-y-1"
+      className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-slate-200/80 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600 overflow-hidden flex transform hover:-translate-y-1"
     >
       {/* Driver Info Panel */}
-      <div className="w-1/3 lg:w-1/4 p-4 flex flex-col items-center justify-center bg-slate-50/70 text-center border-r border-slate-200">
-        <img src={driver.avatarUrl} alt={driver.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-full border-4 border-white shadow-md mb-2" />
+      <div className="w-1/3 lg:w-1/4 p-4 flex flex-col items-center justify-center bg-slate-50/70 dark:bg-slate-900/50 text-center border-r border-slate-200 dark:border-slate-700">
+        <img src={driver.avatarUrl} alt={driver.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-full border-4 border-white dark:border-slate-600 shadow-md mb-2" />
         <div className="flex items-center gap-2">
-          <h4 className="font-bold text-lg text-slate-800 leading-tight">{driver.name}</h4>
+          <h4 className="font-bold text-lg text-slate-800 dark:text-slate-100 leading-tight">{driver.name}</h4>
           {driver.isVerified && (
               // FIX: Wrapped the icon in a span to apply the title attribute, resolving the prop type error.
               <span title="Verified User">
@@ -32,7 +32,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
         </div>
         <div className="flex items-center gap-1 text-amber-500 mt-1">
             <StarIcon className="w-5 h-5"/>
-            <span className="font-bold text-base text-slate-700">{driver.trustScore.toFixed(1)}</span>
+            <span className="font-bold text-base text-slate-700 dark:text-slate-300">{driver.trustScore.toFixed(1)}</span>
         </div>
       </div>
 
@@ -41,39 +41,39 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users }) => {
         {/* Route */}
         <div className="flex items-center w-full">
           <div className="text-right">
-            <p className="font-bold text-lg text-slate-800">{ride.departureTime}</p>
-            <p className="text-sm text-slate-500">{ride.from}</p>
+            <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{ride.departureTime}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{ride.from}</p>
           </div>
           <div className="flex-grow px-2 lg:px-4">
-              <div className="w-full h-px bg-slate-200 relative">
-                  <div className="w-2.5 h-2.5 bg-white border-2 border-slate-400 rounded-full absolute top-1/2 left-0 -translate-y-1/2"></div>
-                  <div className="w-2.5 h-2.5 bg-slate-400 rounded-full absolute top-1/2 right-0 -translate-y-1/2"></div>
+              <div className="w-full h-px bg-slate-200 dark:bg-slate-600 relative">
+                  <div className="w-2.5 h-2.5 bg-white dark:bg-slate-800 border-2 border-slate-400 dark:border-slate-500 rounded-full absolute top-1/2 left-0 -translate-y-1/2"></div>
+                  <div className="w-2.5 h-2.5 bg-slate-400 dark:bg-slate-500 rounded-full absolute top-1/2 right-0 -translate-y-1/2"></div>
               </div>
           </div>
           <div>
-            <p className="font-bold text-lg text-slate-800">{ride.estimatedArrivalTime}</p>
-            <p className="text-sm text-slate-500">{ride.to}</p>
+            <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{ride.estimatedArrivalTime}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{ride.to}</p>
           </div>
         </div>
         
         {/* Vehicle & Seats */}
         <div className="mt-auto pt-4 flex justify-between items-end">
-          <div className="flex items-center gap-4 text-sm text-slate-600">
+          <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-300">
             <div className="flex items-center gap-1.5">
-              <CarIcon className="w-5 h-5 text-slate-500"/>
+              <CarIcon className="w-5 h-5 text-slate-500 dark:text-slate-400"/>
               <span>{ride.car.make} {ride.car.model}</span>
             </div>
-             <div className="flex items-center gap-1.5 text-indigo-600 font-semibold">
+             <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-semibold">
                 <UsersIcon className="w-5 h-5"/>
                 <span>{ride.availableSeats} seats left</span>
             </div>
           </div>
           
           {/* Price */}
-          <div className="flex items-center text-3xl font-extrabold text-slate-800">
+          <div className="flex items-center text-3xl font-extrabold text-slate-800 dark:text-slate-100">
             <CurrencyRupeeIcon className="w-7 h-7 -mr-1" />
             <span>{ride.pricePerSeat}</span>
-            <p className="text-sm text-slate-500 font-medium ml-1 mt-2">/ seat</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium ml-1 mt-2">/ seat</p>
           </div>
         </div>
       </div>

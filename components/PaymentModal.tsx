@@ -42,13 +42,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
       onClick={handleClose}
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all p-8"
+        className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md transform transition-all p-8"
         onClick={e => e.stopPropagation()}
       >
         {!isPaid && (
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-2xl font-bold text-slate-800">Confirm and Pay</h2>
-            <button onClick={handleClose} className="text-slate-500 hover:text-slate-800 text-3xl">&times;</button>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Confirm and Pay</h2>
+            <button onClick={handleClose} className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 text-3xl">&times;</button>
           </div>
         )}
 
@@ -56,11 +56,11 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
             <div className="text-center py-6">
                 <CheckCircleIcon className="w-20 h-20 text-green-500 mx-auto animate-pulse" />
                 <h3 className="text-3xl font-bold text-green-600 mt-4">Ride Booked!</h3>
-                <p className="text-slate-600 mt-2 mb-6">Your trip from {ride.from} to {ride.to} is confirmed.</p>
+                <p className="text-slate-600 dark:text-slate-300 mt-2 mb-6">Your trip from {ride.from} to {ride.to} is confirmed.</p>
                 
-                <div className="bg-slate-100 rounded-lg p-4 text-left mb-8 border border-slate-200">
-                    <p className="font-semibold text-slate-800">Driver: <span className="font-normal">{driver.name}</span></p>
-                    <p className="font-semibold text-slate-800">Date: <span className="font-normal">{new Date(ride.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></p>
+                <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-4 text-left mb-8 border border-slate-200 dark:border-slate-600">
+                    <p className="font-semibold text-slate-800 dark:text-slate-100">Driver: <span className="font-normal">{driver.name}</span></p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-100">Date: <span className="font-normal">{new Date(ride.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></p>
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -73,7 +73,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
                     </button>
                     <button
                         onClick={handleClose}
-                        className="w-full text-slate-600 font-semibold py-2 rounded-lg hover:bg-slate-100 transition-all"
+                        className="w-full text-slate-600 dark:text-slate-300 font-semibold py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
                     >
                         Close
                     </button>
@@ -82,12 +82,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
         ) : (
             <>
                 {/* Ride Summary */}
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
-                    <p className="font-bold text-lg text-slate-800">{ride.from} → {ride.to}</p>
-                    <p className="text-sm text-slate-500">with {driver.name}</p>
-                    <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-200">
-                        <p className="font-semibold text-slate-600">Total Price</p>
-                        <p className="flex items-center text-xl font-bold text-indigo-600">
+                <div className="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-700 rounded-lg p-4 mb-6">
+                    <p className="font-bold text-lg text-slate-800 dark:text-slate-100">{ride.from} → {ride.to}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">with {driver.name}</p>
+                    <div className="flex justify-between items-center mt-2 pt-2 border-t border-slate-200 dark:border-slate-600">
+                        <p className="font-semibold text-slate-600 dark:text-slate-300">Total Price</p>
+                        <p className="flex items-center text-xl font-bold text-indigo-600 dark:text-indigo-400">
                             <CurrencyRupeeIcon className="w-5 h-5" />
                             {ride.pricePerSeat}
                         </p>
@@ -97,14 +97,14 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
                 {/* Payment Form */}
                 <form onSubmit={handlePayment} className="space-y-4">
                     <div>
-                        <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                        <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Card Number</label>
                         <div className="relative">
                             <CreditCardIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <input
                                 id="cardNumber"
                                 type="text"
                                 placeholder="0000 0000 0000 0000"
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 required
                                 defaultValue="4242 4242 4242 4242"
                             />
@@ -112,12 +112,12 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="expiry" className="block text-sm font-medium text-gray-700 mb-1">Expiry</label>
-                            <input id="expiry" type="text" placeholder="MM / YY" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required defaultValue="12 / 28"/>
+                            <label htmlFor="expiry" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Expiry</label>
+                            <input id="expiry" type="text" placeholder="MM / YY" className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500" required defaultValue="12 / 28"/>
                         </div>
                         <div>
-                            <label htmlFor="cvc" className="block text-sm font-medium text-gray-700 mb-1">CVC</label>
-                            <input id="cvc" type="text" placeholder="123" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500" required defaultValue="123"/>
+                            <label htmlFor="cvc" className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">CVC</label>
+                            <input id="cvc" type="text" placeholder="123" className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500" required defaultValue="123"/>
                         </div>
                     </div>
 

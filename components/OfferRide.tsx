@@ -45,9 +45,9 @@ const OfferRide: React.FC<OfferRideProps> = ({ currentUser, onAddRide }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-slate-200">
-      <h2 className="text-3xl font-bold text-gray-900 mb-2">Offer a New Ride</h2>
-      <p className="text-gray-600 mb-8">Fill out the details below to add your journey to RideLink.</p>
+    <div className="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
+      <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-2">Offer a New Ride</h2>
+      <p className="text-gray-600 dark:text-slate-400 mb-8">Fill out the details below to add your journey to RideLink.</p>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -89,7 +89,7 @@ interface FormInputProps {
 
 const FormInput: React.FC<FormInputProps> = ({ id, label, value, onChange, placeholder, type = 'text', icon }) => (
     <div>
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+        <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">{label}</label>
         <div className="relative">
             {icon && <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
               {React.cloneElement(icon, { className: 'w-5 h-5' })}
@@ -100,7 +100,7 @@ const FormInput: React.FC<FormInputProps> = ({ id, label, value, onChange, place
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className={`w-full py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${icon ? 'pl-10 pr-4' : 'px-4'}`}
+                className={`w-full py-3 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 dark:placeholder-slate-400 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${icon ? 'pl-10 pr-4' : 'px-4'}`}
             />
         </div>
     </div>

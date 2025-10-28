@@ -42,24 +42,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch }) => {
 
   return (
     <div className="flex flex-col items-center justify-center -mt-8 md:-mt-12">
-      <div className="w-full bg-gradient-to-tr from-violet-100 via-pink-50 to-blue-100 rounded-2xl shadow-lg relative overflow-hidden">
+      <div className="w-full bg-gradient-to-tr from-violet-100 via-pink-50 to-blue-100 dark:from-violet-900/70 dark:via-pink-900/30 dark:to-blue-900/70 rounded-2xl shadow-lg relative overflow-hidden">
         
         {/* Decorative Blobs */}
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-40 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 dark:bg-purple-900 rounded-full mix-blend-multiply filter blur-xl opacity-40 dark:opacity-50 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 dark:bg-yellow-900 rounded-full mix-blend-multiply filter blur-xl opacity-40 dark:opacity-50 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 dark:bg-pink-900 rounded-full mix-blend-multiply filter blur-xl opacity-40 dark:opacity-50 animate-blob animation-delay-4000"></div>
         
         <div className="w-full h-full p-8 md:p-20 flex flex-col items-center justify-center text-center relative z-10">
-            <h1 className="text-4xl md:text-6xl font-black text-slate-800 leading-tight mb-4 tracking-tighter">
+            <h1 className="text-4xl md:text-6xl font-black text-slate-800 dark:text-slate-100 leading-tight mb-4 tracking-tighter">
               Your Vibe, Your Ride.
             </h1>
-            <p className="text-lg md:text-xl text-slate-600 max-w-2xl mb-8">
+            <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mb-8">
               Skip the surge pricing & travel with verified peeps. Chennai to Bangalore or anywhere in between—we got you. 🤙
             </p>
         </div>
       </div>
 
-      <div className="w-full max-w-4xl -mt-16 bg-white/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200">
+      <div className="w-full max-w-4xl -mt-16 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200 dark:border-slate-700">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 items-center gap-4">
           <div className="md:col-span-1 relative flex items-center">
              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -72,7 +72,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch }) => {
               value={from}
               onChange={(e) => setFrom(e.target.value)}
               placeholder="Leaving from..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             />
           </div>
            <div className="md:col-span-1 relative flex items-center">
@@ -86,7 +86,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch }) => {
               value={to}
               onChange={(e) => setTo(e.target.value)}
               placeholder="Going to..."
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             />
           </div>
           <div className="md:col-span-1 relative flex items-center">
@@ -97,7 +97,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch }) => {
               id="date"
               type="date"
               defaultValue={new Date().toISOString().split('T')[0]}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-gray-700"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
             />
           </div>
           <button
@@ -115,8 +115,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch }) => {
             {kpis.map((kpi, index) => (
                 <div key={index} className="flex flex-col items-center">
                     <div className="mb-2">{kpi.icon}</div>
-                    <p className="text-2xl md:text-3xl font-bold text-slate-800">{kpi.value}</p>
-                    <p className="text-sm text-slate-500">{kpi.label}</p>
+                    <p className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">{kpi.value}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{kpi.label}</p>
                 </div>
             ))}
         </div>

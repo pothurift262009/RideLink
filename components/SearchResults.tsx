@@ -25,29 +25,29 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <aside className="lg:w-1/4">
-        <div className="bg-white p-6 rounded-xl shadow-md sticky top-28 border border-slate-200">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Filters</h3>
-          <div className="flex items-center justify-between bg-slate-100 p-3 rounded-lg">
-            <label htmlFor="women-only" className="font-semibold text-gray-700">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md sticky top-28 border border-slate-200 dark:border-slate-700">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-slate-100 mb-4">Filters</h3>
+          <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-700/50 p-3 rounded-lg">
+            <label htmlFor="women-only" className="font-semibold text-gray-700 dark:text-slate-200">
               Women Only Rides
             </label>
             <div
               onClick={() => setWomenOnly(!womenOnly)}
-              className={`w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer transition-colors ${womenOnly ? 'bg-indigo-600' : 'bg-gray-300'}`}
+              className={`w-12 h-6 flex items-center bg-gray-300 dark:bg-slate-600 rounded-full p-1 cursor-pointer transition-colors ${womenOnly ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-slate-600'}`}
             >
               <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${womenOnly ? 'translate-x-6' : ''}`} />
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">Only show rides offered by women drivers.</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-2">Only show rides offered by women drivers.</p>
         </div>
       </aside>
 
       <div className="lg:w-3/4">
         <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-slate-100">
               {searchCriteria.from} → {searchCriteria.to}
             </h2>
-            <p className="text-gray-600">{filteredRides.length} rides found {womenOnly && '(women drivers only)'}</p>
+            <p className="text-gray-600 dark:text-slate-400">{filteredRides.length} rides found {womenOnly && '(women drivers only)'}</p>
         </div>
 
         {filteredRides.length > 0 ? (
@@ -57,9 +57,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
             ))}
           </div>
         ) : (
-          <div className="text-center bg-white p-12 rounded-xl shadow-md border border-slate-200">
-            <h3 className="text-xl font-semibold text-gray-700">No rides found</h3>
-            <p className="text-gray-500 mt-2">Try adjusting your filters or search for a different route.</p>
+          <div className="text-center bg-white dark:bg-slate-800 p-12 rounded-xl shadow-md border border-slate-200 dark:border-slate-700">
+            <h3 className="text-xl font-semibold text-gray-700 dark:text-slate-200">No rides found</h3>
+            <p className="text-gray-500 dark:text-slate-400 mt-2">Try adjusting your filters or search for a different route.</p>
           </div>
         )}
       </div>

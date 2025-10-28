@@ -229,7 +229,7 @@ const App: React.FC = () => {
   const rideToProcessDriver = users.find(u => u.id === rideToProcess?.driverId);
 
   return (
-    <div className="bg-slate-50 min-h-screen flex flex-col">
+    <div className="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 min-h-screen flex flex-col transition-colors duration-300">
       <Header 
         currentUser={currentUser}
         onLogoClick={() => handleNavigate('landing')}
