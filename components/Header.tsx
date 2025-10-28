@@ -7,7 +7,7 @@ interface HeaderProps {
   onLoginClick: () => void;
   onSignUpClick: () => void;
   onLogoutClick: () => void;
-  onNavigate: (page: 'landing' | 'results' | 'details' | 'offer' | 'myRides') => void;
+  onNavigate: (page: 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile') => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick, onSignUpClick, onLogoutClick, onNavigate }) => {
@@ -26,25 +26,27 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick,
             </svg>
             <span className="text-2xl font-bold text-gray-800 tracking-tight">RideLink</span>
           </div>
-          <nav className="hidden md:flex items-center space-x-6">
-             {currentUser && (
-              <>
+          <nav className="hidden md:flex items-center">
+            {currentUser ? (
+              <div className="flex items-center space-x-6">
                 <a onClick={() => onNavigate('offer')} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors cursor-pointer">Offer a Ride</a>
                 <a onClick={() => onNavigate('myRides')} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors cursor-pointer">My Rides</a>
-              </>
-            )}
-            {currentUser ? (
-              <div className="flex items-center gap-4">
-                 <div className="flex items-center gap-2">
-                    <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-8 h-8 rounded-full border-2 border-indigo-200" />
-                    <span className="font-semibold text-gray-700">{currentUser.name}</span>
-                 </div>
-                 <button 
-                    onClick={onLogoutClick}
-                    className="bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg hover:bg-slate-300 transition-all text-sm"
-                  >
-                  Log Out
-                </button>
+                <a onClick={() => onNavigate('profile')} className="text-gray-600 hover:text-indigo-600 font-medium transition-colors cursor-pointer">My Profile</a>
+                <div className="flex items-center gap-4 pl-2 border-l border-slate-200">
+                   <div 
+                      onClick={() => onNavigate('profile')}
+                      className="flex items-center gap-2 cursor-pointer p-1 rounded-lg hover:bg-slate-100"
+                   >
+                      <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-8 h-8 rounded-full border-2 border-indigo-200" />
+                      <span className="font-semibold text-gray-700">{currentUser.name}</span>
+                   </div>
+                   <button 
+                      onClick={onLogoutClick}
+                      className="bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg hover:bg-slate-300 transition-all text-sm"
+                    >
+                    Log Out
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="flex items-center gap-2">

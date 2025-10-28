@@ -13,9 +13,10 @@ import SignUpModal from './components/SignUpModal';
 import PaymentModal from './components/PaymentModal';
 import RatingModal from './components/RatingModal';
 import CancelModal from './components/CancelModal';
+import UserProfile from './components/UserProfile';
 import { calculateTrustScore } from './services/trustScoreService';
 
-type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides';
+type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
@@ -211,6 +212,12 @@ const App: React.FC = () => {
             );
         }
         // Redirect to landing if not logged in
+        handleNavigate('landing');
+        return null;
+      case 'profile':
+        if (currentUser) {
+          return <UserProfile user={currentUser} allUsers={users} />;
+        }
         handleNavigate('landing');
         return null;
       case 'landing':
