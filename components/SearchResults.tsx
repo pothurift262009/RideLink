@@ -10,9 +10,10 @@ interface SearchResultsProps {
   onSelectRide: (ride: Ride) => void;
   searchCriteria: { from: string; to: string };
   users: User[];
+  onViewProfile: (user: User) => void;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, searchCriteria, users }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, searchCriteria, users, onViewProfile }) => {
   const [womenOnly, setWomenOnly] = useState(false);
   const [hoveredRideId, setHoveredRideId] = useState<string | null>(null);
 
@@ -71,6 +72,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
                   onSelectRide={onSelectRide} 
                   users={users} 
                   isHighlighted={ride.id === hoveredRideId}
+                  onViewProfile={onViewProfile}
                 />
               </div>
             ))}

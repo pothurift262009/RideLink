@@ -17,6 +17,7 @@ import UserProfile from './components/UserProfile';
 import SupportChat from './components/SupportChat';
 import { calculateTrustScore } from './services/trustScoreService';
 import { SupportIcon } from './components/icons/Icons';
+import BookingConfirmationModal from './components/BookingConfirmationModal';
 
 type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile';
 
@@ -33,8 +34,10 @@ const App: React.FC = () => {
   const [isLoginModalOpen, setLoginModalOpen] = useState<boolean>(false);
   const [isSignUpModalOpen, setSignUpModalOpen] = useState<boolean>(false);
   const [bookedRideIds, setBookedRideIds] = useState<string[]>([]);
+  const [profileToView, setProfileToView] = useState<User | null>(null);
 
   // Modal States
+  const [isBookingConfirmationOpen, setBookingConfirmationOpen] = useState<boolean>(false);
   const [isPaymentModalOpen, setPaymentModalOpen] = useState<boolean>(false);
   const [isRatingModalOpen, setRatingModalOpen] = useState<boolean>(false);
   const [isCancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
@@ -54,6 +57,11 @@ const App: React.FC = () => {
     setSelectedRide(ride);
     setCurrentPage('details');
   }, []);
+  
+  const handleViewProfile = (userToView: User) => {
+    setProfileToView(userToView);
+    setCurrentPage('profile');
+  };
 
   const handleBackToResults = useCallback(() => {
     setSelectedRide(null);
@@ -62,6 +70,9 @@ const App: React.FC = () => {
   
   const handleNavigate = useCallback((page: Page) => {
     setSelectedRide(null);
+    if (page !== 'profile') {
+      setProfileToView(null);
+    }
     if (page === 'landing') {
         setSearchResults([]);
     }
@@ -70,9 +81,13 @@ const App: React.FC = () => {
 
   // Effect to handle redirects safely after rendering
   useEffect(() => {
-    const protectedPages: Page[] = ['offer', 'myRides', 'profile'];
+    const protectedPages: Page[] = ['offer', 'myRides'];
     if (protectedPages.includes(currentPage) && !currentUser) {
       handleNavigate('landing');
+    }
+    // "profile" page is special, it can be viewed if logged in, regardless of whose profile it is.
+    if (currentPage === 'profile' && !currentUser) {
+       handleNavigate('landing');
     }
 
     if (currentPage === 'details') {
@@ -110,8 +125,13 @@ const App: React.FC = () => {
 
   const handleInitiateBooking = useCallback((ride: Ride) => {
     setRideToProcess(ride);
-    setPaymentModalOpen(true);
+    setBookingConfirmationOpen(true);
   }, []);
+
+  const handleConfirmBooking = () => {
+    setBookingConfirmationOpen(false);
+    setPaymentModalOpen(true);
+  };
   
   const handleConfirmPayment = useCallback((rideId: string) => {
     setBookedRideIds(prev => [...prev, rideId]);
@@ -191,6 +211,7 @@ const App: React.FC = () => {
             onSelectRide={handleSelectRide}
             searchCriteria={searchCriteria}
             users={users}
+            onViewProfile={handleViewProfile}
           />
         );
       case 'details': {
@@ -203,7 +224,8 @@ const App: React.FC = () => {
               onBack={handleBackToResults}
               currentUser={currentUser}
               isBooked={bookedRideIds.includes(selectedRide.id)}
-              onBook={handleInitiateBooking} 
+              onBook={handleInitiateBooking}
+              onViewProfile={handleViewProfile}
             />
           );
         }
@@ -221,10 +243,14 @@ const App: React.FC = () => {
                 users={users}
                 onRateRide={openRatingModal}
                 onCancelRide={handleInitiateCancel}
+                onViewProfile={handleViewProfile}
             />
         ) : null;
-      case 'profile':
-        return currentUser ? <UserProfile user={currentUser} allUsers={users} /> : null;
+      case 'profile': {
+          const userToDisplay = profileToView || currentUser;
+          if (!currentUser || !userToDisplay) return null;
+          return <UserProfile user={userToDisplay} currentUser={currentUser} allUsers={users} onViewProfile={handleViewProfile} />;
+      }
       case 'landing':
       default:
         return <LandingPage onSearch={handleSearch} />;
@@ -264,6 +290,13 @@ const App: React.FC = () => {
       />
       {rideToProcess && rideToProcessDriver && (
         <>
+          <BookingConfirmationModal
+            isOpen={isBookingConfirmationOpen}
+            onClose={() => { setBookingConfirmationOpen(false); setRideToProcess(null); }}
+            ride={rideToProcess}
+            driver={rideToProcessDriver}
+            onConfirm={handleConfirmBooking}
+          />
           <PaymentModal
             isOpen={isPaymentModalOpen}
             onClose={() => { setPaymentModalOpen(false); setRideToProcess(null); }}

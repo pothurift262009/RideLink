@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Ride, User } from '../types';
+import { Ride, User, AISummary, Sentiment } from '../types';
 import { summarizeReviews } from '../services/geminiService';
 import { ArrowLeftIcon, ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, ClockIcon, UsersIcon, CarIcon, ChatBubbleIcon, SparklesIcon, SosIcon, CheckCircleIcon, type IconProps } from './icons/Icons';
 import ChatModal from './ChatModal';
@@ -13,10 +13,26 @@ interface RideDetailsProps {
   currentUser: User | null;
   isBooked: boolean;
   onBook: (ride: Ride) => void;
+  onViewProfile: (user: User) => void;
 }
 
-const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, currentUser, isBooked, onBook }) => {
-  const [aiSummary, setAiSummary] = useState<string>('');
+const SentimentBadge: React.FC<{ sentiment: Sentiment }> = ({ sentiment }) => {
+    const sentimentStyles = {
+        Positive: 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300',
+        Negative: 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300',
+        Mixed: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300',
+        Neutral: 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300',
+    };
+
+    return (
+        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${sentimentStyles[sentiment]}`}>
+            Overall Sentiment: {sentiment}
+        </span>
+    );
+};
+
+const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, currentUser, isBooked, onBook, onViewProfile }) => {
+  const [aiSummary, setAiSummary] = useState<AISummary | null>(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState<boolean>(true);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [driverPosition, setDriverPosition] = useState<number>(10); // Start 10% into the ride
@@ -102,7 +118,10 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
 
             {/* Driver Profile */}
             <div className="flex flex-col md:flex-row gap-8 mb-8">
-              <div className="md:w-1/3 flex flex-col items-center text-center">
+              <div
+                onClick={() => onViewProfile(driver)}
+                className="md:w-1/3 flex flex-col items-center text-center cursor-pointer p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/50"
+              >
                 <img src={driver.avatarUrl} alt={driver.name} className="w-24 h-24 rounded-full border-4 border-gray-200 dark:border-slate-600 mb-4" />
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-xl font-bold text-gray-800 dark:text-slate-100">{driver.name}</h3>
@@ -120,12 +139,15 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
               </div>
               
               <div className="md:w-2/3">
-                  <h4 className="flex items-center gap-2 text-lg font-bold text-gray-800 dark:text-slate-100 mb-3">
-                      <SparklesIcon className="w-6 h-6 text-indigo-500" />
-                      AI Trust Insights
-                  </h4>
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="flex items-center gap-2 text-lg font-bold text-gray-800 dark:text-slate-100">
+                        <SparklesIcon className="w-6 h-6 text-indigo-500" />
+                        AI Trust Insights
+                    </h4>
+                    {aiSummary && !isLoadingSummary && <SentimentBadge sentiment={aiSummary.sentiment} />}
+                  </div>
                   <div className="bg-gradient-to-r from-indigo-500 to-blue-500 p-0.5 rounded-lg">
-                      <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-md min-h-[100px]">
+                      <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-md min-h-[120px] relative">
                           {isLoadingSummary ? (
                               <div className="space-y-3">
                                   <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-full"></div>
@@ -133,11 +155,21 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
                                   <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded animate-pulse w-3/4"></div>
                               </div>
                           ) : (
-                              <p className="text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{aiSummary}</p>
+                              <>
+                                <p className="text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{aiSummary?.summary}</p>
+                                <p className="text-xs text-slate-400 dark:text-slate-500 mt-3 absolute bottom-2 right-3">
+                                  *This is an AI-generated summary.
+                                </p>
+                              </>
                           )}
                       </div>
                   </div>
               </div>
+            </div>
+
+            {/* Cancellation Policy */}
+            <div className="text-center text-xs text-slate-500 dark:text-slate-400 mb-4 px-2">
+              <p>Free cancellation up to 24 hours before departure. A small fee may apply for late cancellations.</p>
             </div>
             
             {/* Actions */}

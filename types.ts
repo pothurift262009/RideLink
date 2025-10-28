@@ -55,6 +55,12 @@ export interface Message {
   timestamp: string;
 }
 
+export interface ChatMessage {
+    id: number;
+    sender: 'user' | 'ai';
+    text: string;
+}
+
 export interface Conversation {
   rideId: string;
   messages: Message[];
@@ -63,4 +69,11 @@ export interface Conversation {
 export interface Coordinates {
   x: number;
   y: number;
+}
+
+export type Sentiment = 'Positive' | 'Negative' | 'Mixed' | 'Neutral';
+
+export interface AISummary {
+  summary: string;
+  sentiment: Sentiment;
 }

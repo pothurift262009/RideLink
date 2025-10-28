@@ -49,6 +49,10 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
 
   const handleGoToVerification = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name || !email || !password) {
+        alert("Please fill out all personal details first.");
+        return;
+    }
     setStep(2);
   };
 
@@ -111,7 +115,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
                     <button 
                         onClick={handleSendOtp} 
                         disabled={aadhaarNumber.length !== 12}
-                        className="w-full flex justify-center items-center gap-2 bg-slate-700 text-white font-bold py-3 rounded-lg hover:bg-slate-800 transition-all disabled:bg-slate-400"
+                        className="w-full flex justify-center items-center gap-2 bg-slate-700 text-white font-bold py-3 rounded-lg hover:bg-slate-800 transition-all disabled:bg-slate-400 dark:disabled:bg-slate-600"
                     >
                         Send OTP
                     </button>
@@ -141,7 +145,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ isOpen, onClose, onSignUp, on
                     <button 
                         onClick={handleVerifyOtp} 
                         disabled={otp.length !== 6}
-                        className="w-full flex justify-center items-center gap-2 bg-slate-700 text-white font-bold py-3 rounded-lg hover:bg-slate-800 transition-all disabled:bg-slate-400"
+                        className="w-full flex justify-center items-center gap-2 bg-slate-700 text-white font-bold py-3 rounded-lg hover:bg-slate-800 transition-all disabled:bg-slate-400 dark:disabled:bg-slate-600"
                     >
                         Verify OTP
                     </button>

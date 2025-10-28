@@ -1,60 +1,72 @@
-import { GoogleGenAI } from "@google/genai";
-import { Rating } from '../types';
+import { GoogleGenAI, Type } from "@google/genai";
+import { Rating, AISummary, Sentiment } from '../types';
 
-export const summarizeReviews = async (reviews: Rating[]): Promise<string> => {
+const defaultSummary: AISummary = {
+    summary: "This driver is new and has no reviews yet. Be the first to leave feedback!",
+    sentiment: 'Neutral',
+};
+
+export const summarizeReviews = async (reviews: Rating[]): Promise<AISummary> => {
   if (reviews.length === 0) {
-    return "This driver is new and has no reviews yet. Be the first to leave feedback!";
+    return defaultSummary;
   }
   
   // Per @google/genai guidelines, initialize with process.env.API_KEY directly.
-  // Initialization is moved here to prevent app crash on load if API_KEY is not yet available.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   const reviewTexts = reviews.map(r => `Rating: ${r.rating}/5 - "${r.comment}"`).join('\n');
   const prompt = `
-    You are a trust and safety analyst for a carpooling app in India called RideLink.
-    Your task is to summarize the following user reviews for a driver into a concise, professional, and helpful paragraph.
-    Focus on key insights related to safety, driving skill, punctuality, and friendliness.
-    Do not invent information. Base your summary solely on the provided reviews.
-    If reviews are mixed, reflect that in the summary.
-    
-    Here are the reviews:
-    ${reviewTexts}
+    Analyze the following user reviews for a driver on the RideLink carpooling app in India.
+    Based on the reviews, provide a concise summary and a sentiment classification.
 
-    Please provide the summary.
+    Reviews:
+    ${reviewTexts}
   `;
 
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+                summary: {
+                    type: Type.STRING,
+                    description: "A concise, professional, and helpful summary of the reviews. Focus on safety, driving skill, punctuality, and friendliness."
+                },
+                sentiment: {
+                    type: Type.STRING,
+                    description: "The overall sentiment of the reviews. Must be one of: 'Positive', 'Negative', 'Mixed', 'Neutral'."
+                }
+            }
+        }
+      }
     });
-    return response.text;
+    
+    const result = JSON.parse(response.text);
+
+    // Validate the sentiment value to match the Sentiment type
+    const validSentiments: Sentiment[] = ['Positive', 'Negative', 'Mixed', 'Neutral'];
+    const sentiment = validSentiments.includes(result.sentiment) ? result.sentiment : 'Neutral';
+
+    return {
+        summary: result.summary,
+        sentiment: sentiment,
+    };
+
   } catch (error) {
     console.error("Error calling Gemini API:", error);
     if (error instanceof Error && error.message.includes("API Key")) {
-      return "AI summary is currently unavailable due to a configuration issue. Please check individual reviews.";
+      return { 
+        summary: "AI summary is currently unavailable due to a configuration issue. Please check individual reviews.",
+        sentiment: 'Neutral'
+      };
     }
-    return "Could not generate an AI summary at this time. Please check the driver's individual reviews.";
-  }
-};
-
-export const getSupportResponse = async (userPrompt: string): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
-  const systemInstruction = `You are a friendly and knowledgeable support agent for RideLink, an intercity carpooling platform in India. Your goal is to provide helpful, concise, and polite assistance to users. Answer questions about booking rides, offering rides, payments, safety features, and user verification. If you don't know an answer, politely say you need to check with the support team. Keep your answers brief and easy to understand.`;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: userPrompt,
-      config: {
-        systemInstruction: systemInstruction,
-      }
-    });
-    return response.text;
-  } catch (error) {
-    console.error("Error calling Gemini API for support:", error);
-    return "I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again in a moment.";
+    return {
+        summary: "Could not generate an AI summary at this time. Please check the driver's individual reviews.",
+        sentiment: 'Neutral'
+    };
   }
 };

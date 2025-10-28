@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Ride, User } from '../types';
-import { CreditCardIcon, CurrencyRupeeIcon, CheckCircleIcon, TicketIcon } from './icons/Icons';
+import { CreditCardIcon, CurrencyRupeeIcon, CheckCircleIcon } from './icons/Icons';
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -14,6 +14,16 @@ interface PaymentModalProps {
 const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driver, onConfirmPayment, onGoToMyRides }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
+
+  useEffect(() => {
+    if (isPaid) {
+      const timer = setTimeout(() => {
+        onGoToMyRides();
+      }, 3000); // Automatically redirect after 3 seconds
+
+      return () => clearTimeout(timer); // Cleanup timer if component unmounts
+    }
+  }, [isPaid, onGoToMyRides]);
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,29 +65,17 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
         {isPaid ? (
             <div className="text-center py-6">
                 <CheckCircleIcon className="w-20 h-20 text-green-500 mx-auto animate-pulse" />
-                <h3 className="text-3xl font-bold text-green-600 mt-4">Ride Booked!</h3>
+                <h3 className="text-3xl font-bold text-green-600 mt-4">Payment Successful!</h3>
                 <p className="text-slate-600 dark:text-slate-300 mt-2 mb-6">Your trip from {ride.from} to {ride.to} is confirmed.</p>
                 
                 <div className="bg-slate-100 dark:bg-slate-700 rounded-lg p-4 text-left mb-8 border border-slate-200 dark:border-slate-600">
                     <p className="font-semibold text-slate-800 dark:text-slate-100">Driver: <span className="font-normal">{driver.name}</span></p>
                     <p className="font-semibold text-slate-800 dark:text-slate-100">Date: <span className="font-normal">{new Date(ride.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></p>
                 </div>
-
-                <div className="flex flex-col gap-3">
-                    <button 
-                        onClick={onGoToMyRides}
-                        className="w-full flex justify-center items-center gap-2 bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-all"
-                    >
-                        <TicketIcon className="w-5 h-5" />
-                        View My Rides
-                    </button>
-                    <button
-                        onClick={handleClose}
-                        className="w-full text-slate-600 dark:text-slate-300 font-semibold py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
-                    >
-                        Close
-                    </button>
-                </div>
+                
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                    Redirecting you to 'My Rides'...
+                </p>
             </div>
         ) : (
             <>

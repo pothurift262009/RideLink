@@ -7,9 +7,10 @@ interface RideCardProps {
   onSelectRide: (ride: Ride) => void;
   users: User[];
   isHighlighted?: boolean;
+  onViewProfile: (user: User) => void;
 }
 
-const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighlighted = false }) => {
+const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighlighted = false, onViewProfile }) => {
   const driver = users.find(u => u.id === ride.driverId);
 
   if (!driver) return null;
@@ -24,7 +25,10 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighli
       }`}
     >
       {/* Driver Info Panel */}
-      <div className="w-1/3 lg:w-1/4 p-4 flex flex-col items-center justify-center bg-slate-50/70 dark:bg-slate-900/50 text-center border-r border-slate-200 dark:border-slate-700">
+      <div
+        onClick={(e) => { e.stopPropagation(); onViewProfile(driver); }}
+        className="w-1/3 lg:w-1/4 p-4 flex flex-col items-center justify-center bg-slate-50/70 dark:bg-slate-900/50 text-center border-r border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900/80"
+      >
         <img src={driver.avatarUrl} alt={driver.name} className="w-16 h-16 lg:w-20 lg:h-20 rounded-full border-4 border-white dark:border-slate-600 shadow-md mb-2" />
         <div className="flex items-center gap-2">
           <h4 className="font-bold text-lg text-slate-800 dark:text-slate-100 leading-tight">{driver.name}</h4>

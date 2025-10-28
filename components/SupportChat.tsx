@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PaperAirplaneIcon, SparklesIcon } from './icons/Icons';
-import { getSupportResponse } from '../services/geminiService';
+import { GoogleGenAI } from '@google/genai';
+import type { Chat } from '@google/genai';
+import { ChatMessage } from '../types';
+
 
 interface SupportChatProps {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface ChatMessage {
-    id: number;
-    sender: 'user' | 'ai';
-    text: string;
 }
 
 const SupportChat: React.FC<SupportChatProps> = ({ isOpen, onClose }) => {
@@ -19,17 +16,37 @@ const SupportChat: React.FC<SupportChatProps> = ({ isOpen, onClose }) => {
   ]);
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [chat, setChat] = useState<Chat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+        try {
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            const chatSession = ai.chats.create({
+                model: 'gemini-2.5-flash',
+                config: {
+                    systemInstruction: `You are a friendly and knowledgeable support agent for RideLink, an intercity carpooling platform in India. Your goal is to provide helpful, concise, and polite assistance to users. Answer questions about booking rides, offering rides, payments, safety features, and user verification. If you don't know an answer, politely say you need to check with the support team. Keep your answers brief and easy to understand.`,
+                },
+            });
+            setChat(chatSession);
+        } catch (error) {
+            console.error("Failed to initialize Gemini chat:", error);
+        }
+    } else {
+        setChat(null); 
+    }
+  }, [isOpen]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(scrollToBottom, [messages]);
+  useEffect(scrollToBottom, [messages, isLoading]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (newMessage.trim() === '' || isLoading) return;
+    if (newMessage.trim() === '' || isLoading || !chat) return;
 
     const userMessage: ChatMessage = {
       id: Date.now(),
@@ -38,11 +55,13 @@ const SupportChat: React.FC<SupportChatProps> = ({ isOpen, onClose }) => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const userPrompt = newMessage.trim();
     setNewMessage('');
     setIsLoading(true);
 
     try {
-        const aiResponseText = await getSupportResponse(userMessage.text);
+        const response = await chat.sendMessage({ message: userPrompt });
+        const aiResponseText = response.text;
         const aiMessage: ChatMessage = {
             id: Date.now() + 1,
             sender: 'ai',
@@ -50,6 +69,7 @@ const SupportChat: React.FC<SupportChatProps> = ({ isOpen, onClose }) => {
         };
         setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
+        console.error("Error sending message to Gemini:", error);
         const errorMessage: ChatMessage = {
             id: Date.now() + 1,
             sender: 'ai',
