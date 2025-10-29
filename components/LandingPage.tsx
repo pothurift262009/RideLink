@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
     LeafIcon, ShieldCheckIcon, StarIcon, TicketIcon, 
     CarIcon, SparklesIcon, ChatBubbleIcon, FemaleUserIcon, 
-    CurrencyRupeeIcon, ClockIcon, UsersIcon, MagicWandIcon 
+    CurrencyRupeeIcon, ClockIcon, UsersIcon, MagicWandIcon, CheckCircleIcon 
 } from './icons/Icons';
 import AITripPlannerModal from './AITripPlannerModal';
 import { AITripPlan } from '../types';
@@ -52,14 +52,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
 
   const kpis = [
     {
-      icon: <TicketIcon className="w-8 h-8 text-indigo-500" />,
-      value: "50,000+",
-      label: "Journeys Shared"
+      icon: <CurrencyRupeeIcon className="w-8 h-8 text-indigo-500" />,
+      value: "₹12,000+",
+      label: "Avg. Monthly Savings"
     },
     {
-      icon: <ShieldCheckIcon className="w-8 h-8 text-green-500" />,
-      value: "10,000+",
-      label: "Verified Members"
+      icon: <CheckCircleIcon className="w-8 h-8 text-green-500" />,
+      value: "95%",
+      label: "Successful Matches"
     },
     {
       icon: <LeafIcon className="w-8 h-8 text-emerald-500" />,
@@ -188,23 +188,50 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
         
         {/* Highway Visuals */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 z-0 overflow-hidden pointer-events-none">
-            {/* Road */}
-            <div className="absolute bottom-0 left-0 right-0 h-24 bg-slate-700/50 dark:bg-slate-800/70 [clip-path:polygon(0_15%,100%_0,100%_100%,0%_100%)]"></div>
-            {/* Lane Markings */}
-            <div className="absolute bottom-10 left-0 w-full h-1 border-t-4 border-dashed border-slate-500/30 dark:border-slate-600/50"></div>
-            
-            {/* Car 1 */}
-            <div className="absolute bottom-[4.5rem] w-full animate-drive-fast">
-                <div className="w-24 h-10 bg-indigo-500 rounded-t-lg rounded-b-md shadow-lg relative left-[15%] transform -skew-x-12">
-                    <div className="absolute top-2 left-2 w-6 h-5 bg-cyan-300/50 rounded-sm skew-x-12"></div>
-                    <div className="absolute top-2 right-2 w-10 h-5 bg-cyan-300/50 rounded-sm skew-x-12"></div>
+            {/* Far Trees */}
+            <div className="absolute bottom-28 w-full animate-scenery-slow" style={{ animationDelay: '2s' }}>
+                <div className="absolute w-6 h-12" style={{ left: '20%' }}>
+                    <div className="w-full h-3/4 bg-emerald-800/70 dark:bg-emerald-900/70 rounded-full"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1/4 bg-amber-900/70"></div>
+                </div>
+                <div className="absolute w-5 h-10" style={{ left: '75%' }}>
+                    <div className="w-full h-3/4 bg-emerald-700/70 dark:bg-emerald-800/70 rounded-t-lg"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1/4 bg-amber-900/70"></div>
                 </div>
             </div>
-            {/* Car 2 */}
-            <div className="absolute bottom-8 w-full animate-drive-slow">
-                <div className="w-20 h-8 bg-rose-500 rounded-t-lg rounded-b-md shadow-lg relative left-[55%] transform -skew-x-12">
-                    <div className="absolute top-1 left-2 w-5 h-4 bg-cyan-300/50 rounded-sm skew-x-12"></div>
-                    <div className="absolute top-1 right-2 w-8 h-4 bg-cyan-300/50 rounded-sm skew-x-12"></div>
+
+            {/* Road */}
+            <div className="absolute bottom-0 left-0 right-0 h-28 bg-slate-600/60 dark:bg-slate-800/80 [clip-path:polygon(0_25%,100%_0,100%_100%,0%_100%)]"></div>
+            {/* Lane markings */}
+            <div className="absolute bottom-16 left-0 w-full h-1 border-t-4 border-dashed border-slate-400/40 dark:border-slate-500/60"></div>
+
+            {/* Car 1 (SUV) */}
+            <div className="absolute bottom-12 w-full animate-drive-fast">
+                <div className="w-24 h-12 bg-indigo-500 rounded-t-lg rounded-b-sm shadow-lg relative transform -skew-x-12">
+                    <div className="absolute top-2 right-2 w-[65%] h-6 bg-cyan-300/50 rounded-md"></div>
+                    <div className="absolute -bottom-2 left-2 w-5 h-5 bg-slate-800/80 rounded-full"></div>
+                    <div className="absolute -bottom-2 right-4 w-5 h-5 bg-slate-800/80 rounded-full"></div>
+                </div>
+            </div>
+            
+            {/* Car 2 (Sedan) */}
+            <div className="absolute bottom-6 w-full animate-drive-slow">
+                <div className="w-24 h-10 bg-rose-500 rounded-t-lg rounded-b-md shadow-lg relative transform -skew-x-12">
+                    <div className="absolute top-2 right-2 w-[60%] h-5 bg-cyan-300/50 rounded"></div>
+                    <div className="absolute -bottom-1.5 left-2 w-4 h-4 bg-slate-800/80 rounded-full"></div>
+                    <div className="absolute -bottom-1.5 right-3 w-4 h-4 bg-slate-800/80 rounded-full"></div>
+                </div>
+            </div>
+
+            {/* Near Trees */}
+            <div className="absolute bottom-4 w-full animate-scenery-fast">
+                <div className="absolute w-10 h-20" style={{ left: '50%' }}>
+                    <div className="w-full h-3/4 bg-emerald-700/90 dark:bg-emerald-800/90 rounded-t-full"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-1/4 bg-amber-900/90"></div>
+                </div>
+                <div className="absolute w-8 h-16" style={{ left: '90%', animationDelay: '4s' }}>
+                    <div className="w-full h-3/4 bg-emerald-600/90 dark:bg-emerald-700/90 rounded-full"></div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1/4 bg-amber-800/90"></div>
                 </div>
             </div>
         </div>
@@ -222,7 +249,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
       <div className="w-full max-w-5xl -mt-16 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200 dark:border-slate-700">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 items-center gap-4">
           <div className="md:col-span-1 relative flex items-center">
-             <svg xmlns="http://www.w.org/2000/svg" className="h-5 w-5 absolute left-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
