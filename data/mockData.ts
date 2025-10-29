@@ -1,4 +1,4 @@
-import { User, Ride, Gender, VerificationType, Rating, Conversation, Coordinates } from '../types';
+import { User, Ride, Gender, VerificationType, Rating, Conversation, Coordinates, CarType, Amenity } from '../types';
 
 export const mockUsers: User[] = [
   {
@@ -137,7 +137,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '12:00 PM',
     pricePerSeat: 850,
     availableSeats: 2,
-    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem],
   },
   {
     id: 'ride_2',
@@ -149,7 +150,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '01:30 PM',
     pricePerSeat: 800,
     availableSeats: 0,
-    car: { make: 'Maruti Suzuki', model: 'Swift', color: 'Red', plateNumber: 'TN02CD5678' },
+    car: { make: 'Maruti Suzuki', model: 'Swift', color: 'Red', plateNumber: 'TN02CD5678', type: CarType.Hatchback },
+    amenities: [Amenity.AC],
   },
   {
     id: 'ride_3',
@@ -161,7 +163,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '03:00 PM',
     pricePerSeat: 900,
     availableSeats: 3,
-    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012' },
+    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem, Amenity.PetFriendly],
   },
    {
     id: 'ride_4',
@@ -173,7 +176,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '11:00 AM',
     pricePerSeat: 750,
     availableSeats: 0,
-    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456' },
+    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456', type: CarType.SUV },
+    amenities: [],
   },
   {
     id: 'ride_5',
@@ -185,7 +189,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '10:00 PM',
     pricePerSeat: 850,
     availableSeats: 3,
-    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem],
   },
   {
     id: 'ride_6',
@@ -197,7 +202,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '02:00 PM',
     pricePerSeat: 850,
     availableSeats: 0,
-    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem],
   },
   {
     id: 'ride_7',
@@ -209,7 +215,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '11:50 PM',
     pricePerSeat: 820,
     availableSeats: 0,
-    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem],
   },
   {
     id: 'ride_8',
@@ -221,7 +228,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '03:30 PM',
     pricePerSeat: 840,
     availableSeats: 0,
-    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem],
   },
   {
     id: 'ride_9',
@@ -233,7 +241,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '11:00 PM',
     pricePerSeat: 800,
     availableSeats: 0,
-    car: { make: 'Maruti Suzuki', model: 'Swift', color: 'Red', plateNumber: 'TN02CD5678' },
+    car: { make: 'Maruti Suzuki', model: 'Swift', color: 'Red', plateNumber: 'TN02CD5678', type: CarType.Hatchback },
+    amenities: [Amenity.AC],
   },
   {
     id: 'ride_10',
@@ -245,7 +254,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '04:00 PM',
     pricePerSeat: 920,
     availableSeats: 0,
-    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012' },
+    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem, Amenity.PetFriendly],
   },
   {
     id: 'ride_11',
@@ -257,7 +267,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '07:00 PM',
     pricePerSeat: 900,
     availableSeats: 0,
-    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012' },
+    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012', type: CarType.SUV },
+    amenities: [Amenity.AC, Amenity.MusicSystem, Amenity.PetFriendly],
   },
   {
     id: 'ride_12',
@@ -269,7 +280,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '01:00 PM',
     pricePerSeat: 750,
     availableSeats: 0,
-    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456' },
+    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456', type: CarType.SUV },
+    amenities: [],
   },
   {
     id: 'ride_13',
@@ -281,7 +293,8 @@ export const mockRides: Ride[] = [
     estimatedArrivalTime: '05:00 PM',
     pricePerSeat: 760,
     availableSeats: 0,
-    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456' },
+    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456', type: CarType.SUV },
+    amenities: [Amenity.AC],
   },
 ];
 

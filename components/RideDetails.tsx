@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Ride, User, AISummary, Sentiment } from '../types';
+import { Ride, User, AISummary, Sentiment, Amenity } from '../types';
 import { summarizeReviews } from '../services/geminiService';
-import { ArrowLeftIcon, ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, ClockIcon, UsersIcon, CarIcon, ChatBubbleIcon, SparklesIcon, SosIcon, CheckCircleIcon, type IconProps } from './icons/Icons';
+import { ArrowLeftIcon, ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, ClockIcon, UsersIcon, CarIcon, ChatBubbleIcon, SparklesIcon, SosIcon, CheckCircleIcon, SnowflakeIcon, MusicNoteIcon, PawPrintIcon, type IconProps } from './icons/Icons';
 import ChatModal from './ChatModal';
 import MapComponent from './MapComponent';
 import { cityCoordinates } from '../data/mockData';
@@ -30,6 +30,15 @@ const SentimentBadge: React.FC<{ sentiment: Sentiment }> = ({ sentiment }) => {
         </span>
     );
 };
+
+const AmenityIcon: React.FC<{ amenity: Amenity }> = ({ amenity }) => {
+    switch(amenity) {
+        case Amenity.AC: return <SnowflakeIcon className="w-5 h-5 text-blue-500" />;
+        case Amenity.MusicSystem: return <MusicNoteIcon className="w-5 h-5 text-purple-500" />;
+        case Amenity.PetFriendly: return <PawPrintIcon className="w-5 h-5 text-amber-600" />;
+        default: return null;
+    }
+}
 
 const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, currentUser, isBooked, onBook, onViewProfile }) => {
   const [aiSummary, setAiSummary] = useState<AISummary | null>(null);
@@ -113,7 +122,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
               <InfoItem icon={<ClockIcon />} label="Departs" value={ride.departureTime} />
               <InfoItem icon={<ClockIcon />} label="Arrives" value={ride.estimatedArrivalTime} />
               <InfoItem icon={<UsersIcon />} label="Seats Left" value={`${ride.availableSeats}`} />
-              <InfoItem icon={<CarIcon />} label="Vehicle" value={`${ride.car.make} ${ride.car.model}`} />
+              <InfoItem icon={<CarIcon />} label="Vehicle" value={`${ride.car.make} ${ride.car.model} (${ride.car.type})`} />
             </div>
 
             {/* Driver Profile */}
@@ -170,6 +179,21 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
                   </div>
               </div>
             </div>
+
+            {/* Amenities Section */}
+            {ride.amenities.length > 0 && (
+                <div className="mb-8">
+                    <h4 className="text-lg font-bold text-gray-800 dark:text-slate-100 mb-3">Amenities</h4>
+                    <div className="flex flex-wrap gap-4">
+                        {ride.amenities.map(amenity => (
+                            <div key={amenity} className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-full">
+                                <AmenityIcon amenity={amenity} />
+                                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{amenity}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Cancellation Policy */}
             <div className="text-center text-xs text-slate-500 dark:text-slate-400 mb-4 px-2">

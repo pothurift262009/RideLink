@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { User, Ride } from '../types';
+// FIX: Imported CarType to use in the new ride object.
+import { User, Ride, CarType } from '../types';
 import { ClockIcon, CurrencyRupeeIcon, UsersIcon, CalendarIcon, type IconProps } from './icons/Icons';
 
 interface OfferRideProps {
@@ -38,7 +39,11 @@ const OfferRide: React.FC<OfferRideProps> = ({ currentUser, onAddRide }) => {
             model: 'Innova',
             color: 'Silver',
             plateNumber: 'KA05XY1234',
-        }
+            // FIX: Added the missing 'type' property to conform to the Ride interface.
+            type: CarType.SUV,
+        },
+        // FIX: Added missing 'amenities' property to conform to the Ride interface.
+        amenities: [],
     };
 
     onAddRide(newRide);

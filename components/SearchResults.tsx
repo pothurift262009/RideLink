@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Ride, User, Gender } from '../types';
+import { Ride, User, Gender, CarType, Amenity } from '../types';
 import RideCard from './RideCard';
 import MapComponent from './MapComponent';
 import { cityCoordinates } from '../data/mockData';
-import { CurrencyRupeeIcon, SortAscDescIcon } from './icons/Icons';
+import { CurrencyRupeeIcon, SortAscDescIcon, SnowflakeIcon, MusicNoteIcon, PawPrintIcon } from './icons/Icons';
 
 interface SearchResultsProps {
   rides: Ride[];
@@ -20,6 +20,9 @@ const timeSlots = [
     { id: 'evening', label: 'After 6 PM' },
 ];
 
+const carTypes = Object.values(CarType);
+const amenities = Object.values(Amenity);
+
 const parseTime = (timeStr: string): number => {
     const [time, modifier] = timeStr.split(' ');
     let [hours] = time.split(':').map(Number);
@@ -32,6 +35,8 @@ const parseTime = (timeStr: string): number => {
 const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, searchCriteria, users, onViewProfile }) => {
   const [womenOnly, setWomenOnly] = useState(false);
   const [highlightedRideId, setHighlightedRideId] = useState<string | null>(null);
+  const [trackedRide, setTrackedRide] = useState<Ride | null>(null);
+  const [driverPosition, setDriverPosition] = useState<number>(0);
 
   const maxPrice = useMemo(() => {
     if (rides.length === 0) return 1500;
@@ -42,15 +47,56 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
   const [priceRange, setPriceRange] = useState<number>(maxPrice);
   const [selectedTimes, setSelectedTimes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>('trust-desc');
+  const [selectedCarTypes, setSelectedCarTypes] = useState<string[]>([]);
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
   useEffect(() => {
     setPriceRange(maxPrice);
   }, [maxPrice]);
+  
+  // Effect to handle the driver tracking animation
+  useEffect(() => {
+    let intervalId: number | undefined;
+    if (trackedRide) {
+      intervalId = window.setInterval(() => {
+        setDriverPosition(prev => {
+          const nextPosition = prev + 5 + Math.random() * 5; // Move 5-10% every 2s
+          return nextPosition >= 90 ? 10 : nextPosition; // Reset when near the end
+        });
+      }, 2000);
+    }
+    return () => {
+      if (intervalId) {
+        window.clearInterval(intervalId);
+      }
+    };
+  }, [trackedRide]);
+
+  const handleTrackRide = (ride: Ride) => {
+    if (trackedRide?.id === ride.id) {
+      setTrackedRide(null); // Stop tracking if the same ride is clicked again
+    } else {
+      setTrackedRide(ride);
+      setDriverPosition(10); // Start animation at 10%
+    }
+  };
 
 
   const handleTimeChange = (slotId: string) => {
     setSelectedTimes(prev => 
         prev.includes(slotId) ? prev.filter(id => id !== slotId) : [...prev, slotId]
+    );
+  };
+  
+  const handleCarTypeChange = (carType: string) => {
+    setSelectedCarTypes(prev => 
+        prev.includes(carType) ? prev.filter(t => t !== carType) : [...prev, carType]
+    );
+  };
+  
+  const handleAmenityChange = (amenity: string) => {
+    setSelectedAmenities(prev =>
+        prev.includes(amenity) ? prev.filter(a => a !== amenity) : [...prev, amenity]
     );
   };
 
@@ -74,6 +120,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
             if (slot === 'evening') return hour >= 18;
             return false;
         });
+      })
+      .filter(ride => {
+        if (selectedCarTypes.length === 0) return true;
+        return selectedCarTypes.includes(ride.car.type);
+      })
+      .filter(ride => {
+        if (selectedAmenities.length === 0) return true;
+        return selectedAmenities.every(amenity => ride.amenities.includes(amenity as Amenity));
       });
 
     // Sorting
@@ -94,7 +148,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
     });
 
     return tempRides;
-  }, [rides, womenOnly, users, priceRange, selectedTimes, sortBy]);
+  }, [rides, womenOnly, users, priceRange, selectedTimes, sortBy, selectedCarTypes, selectedAmenities]);
 
   const rideCountText = `${filteredAndSortedRides.length} ride${filteredAndSortedRides.length !== 1 ? 's' : ''} found`;
 
@@ -158,6 +212,49 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
                     ))}
                  </div>
             </div>
+
+            {/* Car Type Filter */}
+            <div>
+                <label className="block font-semibold text-gray-700 dark:text-slate-200 mb-2">Car Type</label>
+                <div className="grid grid-cols-3 gap-2">
+                    {carTypes.map(type => (
+                        <button
+                            key={type}
+                            onClick={() => handleCarTypeChange(type)}
+                            className={`px-3 py-2 text-sm font-medium rounded-md text-center transition-colors border ${
+                                selectedCarTypes.includes(type)
+                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                : 'bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
+                            }`}
+                        >
+                            {type}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Amenities Filter */}
+            <div>
+                <label className="block font-semibold text-gray-700 dark:text-slate-200 mb-2">Amenities</label>
+                <div className="flex flex-wrap gap-2">
+                    {amenities.map(amenity => (
+                        <button
+                            key={amenity}
+                            onClick={() => handleAmenityChange(amenity)}
+                            className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full transition-colors border ${
+                                selectedAmenities.includes(amenity)
+                                ? 'bg-indigo-600 text-white border-indigo-600'
+                                : 'bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
+                            }`}
+                        >
+                            {amenity === Amenity.AC && <SnowflakeIcon className="w-4 h-4" />}
+                            {amenity === Amenity.MusicSystem && <MusicNoteIcon className="w-4 h-4" />}
+                            {amenity === Amenity.PetFriendly && <PawPrintIcon className="w-4 h-4" />}
+                            <span>{amenity}</span>
+                        </button>
+                    ))}
+                </div>
+            </div>
           </div>
         </aside>
 
@@ -198,6 +295,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
                   users={users} 
                   isHighlighted={ride.id === highlightedRideId}
                   onViewProfile={onViewProfile}
+                  onTrackRide={handleTrackRide}
+                  isTracking={ride.id === trackedRide?.id}
                 />
               </div>
             ))}
@@ -220,6 +319,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
                 rides={filteredAndSortedRides}
                 highlightedRideId={highlightedRideId}
                 onHighlightRide={setHighlightedRideId}
+                driverPosition={trackedRide ? driverPosition : undefined}
               />
             )}
          </div>

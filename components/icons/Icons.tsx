@@ -194,3 +194,30 @@ export const MagicWandIcon: React.FC<IconProps> = (props) => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-1.5m0 0V15.188c0-1.082.023-2.152.066-3.21.037-.9.08-1.796.13-2.686a9.01 9.01 0 011.88-3.385 1.5 1.5 0 012.33-.255" />
   </svg>
 );
+
+export const SnowflakeIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m-4.243-4.243L12 12l4.243 4.243m-8.486 0L12 12 7.757 7.757m8.486 0L12 12l4.243-4.243M4.5 12h15" />
+  </svg>
+);
+
+export const MusicNoteIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V7.5A2.25 2.25 0 0013.5 6h-3a2.25 2.25 0 00-2.25 2.25v.75" />
+  </svg>
+);
+
+export const PawPrintIcon: React.FC<IconProps> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M12.23 18.39a1.5 1.5 0 01-2.46 0l-.33-.42a1.5 1.5 0 01.44-2.2l.5-.33a1.5 1.5 0 011.85.22l.4.42a1.5 1.5 0 01.6 1.63v.35a1.5 1.5 0 01-1 .93zm6.26-3.12a1.5 1.5 0 00-1.85-2.2l-1.33.88a1.5 1.5 0 00-.6 1.63l.33.42a1.5 1.5 0 002.46 0l.99-.73zm-13.15.73a1.5 1.5 0 002.46 0l.33-.42a1.5 1.5 0 00-.6-1.63l-1.33-.88a1.5 1.5 0 00-1.85 2.2l.99.73z" />
+      <path fillRule="evenodd" d="M12 2.25a.75.75 0 01.75.75v.715a4.5 4.5 0 013.14 4.062v.21a1.5 1.5 0 01-1.5 1.5h-.09a3 3 0 00-2.31 1.077 3 3 0 00-2.5 0 3 3 0 00-2.31-1.077H7.5a1.5 1.5 0 01-1.5-1.5v-.21a4.5 4.5 0 013.14-4.062V3a.75.75 0 01.75-.75zm-3.14 5.215a3 3 0 002.31-1.077 3 3 0 002.5 0 3 3 0 002.31 1.077h.09a3 3 0 013 3v.21a6 6 0 01-4.187 5.617 3 3 0 01-1.724.518H12a3 3 0 01-1.724-.518 6 6 0 01-4.187-5.617v-.21a3 3 0 013-3h.09z" clipRule="evenodd" />
+    </svg>
+);
+
+export const TrackingIcon: React.FC<IconProps> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9.75a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);

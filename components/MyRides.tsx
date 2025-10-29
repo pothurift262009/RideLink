@@ -53,6 +53,8 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
                     users={users} 
                     onViewProfile={onViewProfile} 
                     status={isPassenger ? 'booked' : (isDriver ? 'driving' : undefined)}
+                    // FIX: Added the required 'onTrackRide' prop. Since there is no map on this page, a no-op function is provided.
+                    onTrackRide={() => {}}
                   />
                   {isPassenger && (
                     <div className="p-4 bg-slate-50/70 dark:bg-slate-900/50 rounded-b-xl border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">

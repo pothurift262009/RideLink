@@ -1,6 +1,6 @@
 import React from 'react';
-import { Ride, User } from '../types';
-import { ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, UsersIcon, CarIcon, RouteLineIcon, CheckCircleIcon } from './icons/Icons';
+import { Ride, User, Amenity } from '../types';
+import { ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, UsersIcon, CarIcon, RouteLineIcon, CheckCircleIcon, SnowflakeIcon, MusicNoteIcon, PawPrintIcon, TrackingIcon } from './icons/Icons';
 
 interface RideCardProps {
   ride: Ride;
@@ -9,9 +9,22 @@ interface RideCardProps {
   isHighlighted?: boolean;
   onViewProfile: (user: User) => void;
   status?: 'booked' | 'driving';
+  onTrackRide: (ride: Ride) => void;
+  isTracking?: boolean;
 }
 
-const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighlighted = false, onViewProfile, status }) => {
+const AmenityIcon: React.FC<{ amenity: Amenity }> = ({ amenity }) => {
+    switch(amenity) {
+        // FIX: Wrapped icons in a span and moved the title prop to it to resolve prop type errors.
+        case Amenity.AC: return <span title="AC Available"><SnowflakeIcon className="w-5 h-5 text-blue-500" /></span>;
+        case Amenity.MusicSystem: return <span title="Music System"><MusicNoteIcon className="w-5 h-5 text-purple-500" /></span>;
+        case Amenity.PetFriendly: return <span title="Pet Friendly"><PawPrintIcon className="w-5 h-5 text-amber-600" /></span>;
+        default: return null;
+    }
+}
+
+
+const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighlighted = false, onViewProfile, status, onTrackRide, isTracking = false }) => {
   const driver = users.find(u => u.id === ride.driverId);
 
   if (!driver) return null;
@@ -79,22 +92,44 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighli
         
         {/* Vehicle & Seats */}
         <div className="mt-auto pt-4 flex justify-between items-end">
-          <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <CarIcon className="w-5 h-5 text-slate-500 dark:text-slate-400"/>
-              <span>{ride.car.make} {ride.car.model}</span>
+           <div className="space-y-2">
+            <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1.5">
+                <CarIcon className="w-5 h-5 text-slate-500 dark:text-slate-400"/>
+                <span>{ride.car.make} {ride.car.model} ({ride.car.type})</span>
+              </div>
+               <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-semibold">
+                  <UsersIcon className="w-5 h-5"/>
+                  <span>{ride.availableSeats} seats left</span>
+              </div>
             </div>
-             <div className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-semibold">
-                <UsersIcon className="w-5 h-5"/>
-                <span>{ride.availableSeats} seats left</span>
-            </div>
+            
+            {ride.amenities.length > 0 && (
+                <div className="flex items-center gap-3">
+                    {ride.amenities.map(amenity => <AmenityIcon key={amenity} amenity={amenity} />)}
+                </div>
+            )}
           </div>
           
-          {/* Price */}
-          <div className="flex items-center text-3xl font-extrabold text-slate-800 dark:text-slate-100">
-            <CurrencyRupeeIcon className="w-7 h-7 -mr-1" />
-            <span>{ride.pricePerSeat}</span>
-            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium ml-1 mt-2">/ seat</p>
+          <div className="flex items-end gap-2">
+            <button
+                onClick={(e) => { e.stopPropagation(); onTrackRide(ride); }}
+                title="Track on Map"
+                className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors ${
+                    isTracking
+                    ? 'bg-indigo-600 text-white animate-pulse'
+                    : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                }`}
+            >
+                <TrackingIcon className="w-4 h-4"/>
+                <span>{isTracking ? 'Tracking' : 'Track'}</span>
+            </button>
+            {/* Price */}
+            <div className="flex items-center text-3xl font-extrabold text-slate-800 dark:text-slate-100">
+                <CurrencyRupeeIcon className="w-7 h-7 -mr-1" />
+                <span>{ride.pricePerSeat}</span>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium ml-1 mt-2">/ seat</p>
+            </div>
           </div>
         </div>
       </div>

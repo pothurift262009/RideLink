@@ -9,6 +9,18 @@ export enum VerificationType {
   LinkedIn = 'LinkedIn',
 }
 
+export enum CarType {
+    Sedan = 'Sedan',
+    SUV = 'SUV',
+    Hatchback = 'Hatchback',
+}
+
+export enum Amenity {
+    AC = 'AC',
+    MusicSystem = 'Music System',
+    PetFriendly = 'Pet Friendly',
+}
+
 export interface User {
   id: string;
   name: string;
@@ -37,7 +49,9 @@ export interface Ride {
     model: string;
     color: string;
     plateNumber: string; // Last 4 digits for privacy
+    type: CarType;
   };
+  amenities: Amenity[];
 }
 
 export interface Rating {
