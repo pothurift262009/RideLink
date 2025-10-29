@@ -1,17 +1,20 @@
 import React from 'react';
 import { Coordinates, Ride } from '../types';
-import { CarIcon, MapPinIcon } from './icons/Icons';
+import { CarIcon } from './icons/Icons';
 
 interface MapComponentProps {
   startCoords: Coordinates;
   endCoords: Coordinates;
+  startCity: string;
+  endCity: string;
   rides: Ride[];
   highlightedRideId?: string | null;
   driverPosition?: number; // Percentage (0-100) along the route
   onHighlightRide?: (rideId: string | null) => void;
+  onCityClick?: () => void;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, rides, highlightedRideId, driverPosition, onHighlightRide }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, startCity, endCity, rides, highlightedRideId, driverPosition, onHighlightRide, onCityClick }) => {
   const viewBoxWidth = 100;
   const viewBoxHeight = 100;
   
@@ -23,6 +26,14 @@ const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, rid
     driverX = startCoords.x + t * (endCoords.x - startCoords.x);
     driverY = startCoords.y + t * (endCoords.y - startCoords.y);
   }
+
+  // Sort rides to ensure the highlighted one is rendered on top.
+  const sortedRides = [...rides].sort((a, b) => {
+    if (a.id === highlightedRideId) return 1;
+    if (b.id === highlightedRideId) return -1;
+    return 0;
+  });
+
 
   return (
     <div className="relative w-full aspect-video bg-slate-200 dark:bg-slate-900 rounded-lg overflow-hidden">
@@ -42,16 +53,17 @@ const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, rid
                 </filter>
             </defs>
             
-            {/* Render all ride routes */}
-            {rides.map(ride => {
+            {/* Render all ride routes, with highlighted one last */}
+            {sortedRides.map(ride => {
                 const isHighlighted = ride.id === highlightedRideId;
                 return (
                     <g
                         key={ride.id}
-                        onClick={() => onHighlightRide && onHighlightRide(ride.id)}
+                        onMouseEnter={() => onHighlightRide && onHighlightRide(ride.id)}
+                        onMouseLeave={() => onHighlightRide && onHighlightRide(null)}
                         className="cursor-pointer"
                     >
-                        {/* Invisible thicker line for easier clicking */}
+                        {/* Invisible thicker line for easier clicking/hovering */}
                         <line
                             x1={startCoords.x}
                             y1={startCoords.y}
@@ -75,11 +87,15 @@ const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, rid
             })}
            
             {/* Start and End Markers */}
-            <circle cx={startCoords.x} cy={startCoords.y} r="2" className="fill-green-500 stroke-white dark:stroke-slate-900" strokeWidth="0.5" />
-            <text x={startCoords.x} y={startCoords.y + 5} className="text-[4px] font-semibold fill-slate-700 dark:fill-slate-200" textAnchor="middle">Chennai</text>
+            <g onClick={onCityClick} className="cursor-pointer group">
+                <circle cx={startCoords.x} cy={startCoords.y} r="2" className="fill-green-500 stroke-white dark:stroke-slate-900 group-hover:fill-green-400 transition-colors" strokeWidth="0.5" />
+                <text x={startCoords.x} y={startCoords.y + 5} className="text-[4px] font-semibold fill-slate-700 dark:fill-slate-200 group-hover:fill-slate-900 dark:group-hover:fill-white transition-colors pointer-events-none" textAnchor="middle">{startCity}</text>
+            </g>
 
-            <circle cx={endCoords.x} cy={endCoords.y} r="2" className="fill-red-500 stroke-white dark:stroke-slate-900" strokeWidth="0.5" />
-            <text x={endCoords.x} y={endCoords.y - 4} className="text-[4px] font-semibold fill-slate-700 dark:fill-slate-200" textAnchor="middle">Bangalore</text>
+            <g onClick={onCityClick} className="cursor-pointer group">
+                <circle cx={endCoords.x} cy={endCoords.y} r="2" className="fill-red-500 stroke-white dark:stroke-slate-900 group-hover:fill-red-400 transition-colors" strokeWidth="0.5" />
+                <text x={endCoords.x} y={endCoords.y - 4} className="text-[4px] font-semibold fill-slate-700 dark:fill-slate-200 group-hover:fill-slate-900 dark:group-hover:fill-white transition-colors pointer-events-none" textAnchor="middle">{endCity}</text>
+            </g>
 
             {/* Driver Position Marker */}
             {driverPosition !== undefined && (

@@ -57,15 +57,15 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, currentUser, allUsers, 
             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 sticky top-28">
               <div className="flex flex-col items-center text-center">
                 <img src={user.avatarUrl} alt={user.name} className="w-28 h-28 rounded-full border-4 border-indigo-200 shadow-md mb-4" />
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">{user.name}</h2>
-                <p className="text-gray-500 dark:text-slate-400">{user.email}</p>
-                
-                {user.isVerified && (
-                  <div className="flex items-center gap-2 text-base text-green-800 dark:text-green-200 font-bold bg-green-100 dark:bg-green-500/20 px-4 py-1.5 rounded-full mt-4 shadow-sm">
-                    <ShieldCheckIcon className="w-5 h-5" />
-                    <span>{user.verificationType} Verified</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-slate-100">{user.name}</h2>
+                   {user.isVerified && (
+                    <span title={`${user.verificationType} Verified`}>
+                        <ShieldCheckIcon className="w-6 h-6 text-green-600 dark:text-green-400" />
+                    </span>
+                  )}
+                </div>
+                <p className="text-gray-500 dark:text-slate-400 mt-1">{user.email}</p>
               </div>
               <div className="border-t border-slate-200 dark:border-slate-700 mt-6 pt-4 space-y-3 text-sm">
                   <InfoRow label="Gender" value={user.gender} />

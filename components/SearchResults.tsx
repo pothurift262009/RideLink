@@ -152,6 +152,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
 
   const rideCountText = `${filteredAndSortedRides.length} ride${filteredAndSortedRides.length !== 1 ? 's' : ''} found`;
 
+  const handleCityClick = () => {
+    if (filteredAndSortedRides.length > 0) {
+        const firstRideId = filteredAndSortedRides[0].id;
+        setHighlightedRideId(firstRideId);
+    }
+  };
+
   return (
     <div className="flex flex-col xl:flex-row gap-8">
       {/* Left Column: Filters and Results */}
@@ -316,10 +323,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
               <MapComponent
                 startCoords={cityCoordinates[searchCriteria.from]}
                 endCoords={cityCoordinates[searchCriteria.to]}
+                startCity={searchCriteria.from}
+                endCity={searchCriteria.to}
                 rides={filteredAndSortedRides}
                 highlightedRideId={highlightedRideId}
                 onHighlightRide={setHighlightedRideId}
                 driverPosition={trackedRide ? driverPosition : undefined}
+                onCityClick={handleCityClick}
               />
             )}
          </div>

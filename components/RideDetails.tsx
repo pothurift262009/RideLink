@@ -96,9 +96,12 @@ const RideDetails: React.FC<RideDetailsProps> = ({ ride, driver, onBack, current
                 <MapComponent
                     startCoords={startCoords}
                     endCoords={endCoords}
+                    startCity={ride.from}
+                    endCity={ride.to}
                     driverPosition={driverPosition}
                     highlightedRideId={ride.id}
                     rides={[ride]}
+                    onCityClick={() => {}}
                 />
              </div>
           )}

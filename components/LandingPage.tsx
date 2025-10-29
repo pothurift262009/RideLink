@@ -246,7 +246,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
         </div>
       </div>
 
-      <div className="w-full max-w-5xl -mt-16 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200 dark:border-slate-700">
+      <div className="w-full max-w-5xl -mt-12 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200 dark:border-slate-700">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 items-center gap-4">
           <div className="md:col-span-1 relative flex items-center">
              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
