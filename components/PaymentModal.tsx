@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Ride, User } from '../types';
 import { CreditCardIcon, CurrencyRupeeIcon, CheckCircleIcon } from './icons/Icons';
 
@@ -14,16 +14,6 @@ interface PaymentModalProps {
 const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driver, onConfirmPayment, onGoToMyRides }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPaid, setIsPaid] = useState(false);
-
-  useEffect(() => {
-    if (isPaid) {
-      const timer = setTimeout(() => {
-        onGoToMyRides();
-      }, 3000); // Automatically redirect after 3 seconds
-
-      return () => clearTimeout(timer); // Cleanup timer if component unmounts
-    }
-  }, [isPaid, onGoToMyRides]);
 
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,9 +63,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose, ride, driv
                     <p className="font-semibold text-slate-800 dark:text-slate-100">Date: <span className="font-normal">{new Date(ride.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span></p>
                 </div>
                 
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Redirecting you to 'My Rides'...
-                </p>
+                <button
+                    onClick={onGoToMyRides}
+                    className="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition-all"
+                >
+                    Go to My Rides
+                </button>
+                <button
+                    onClick={handleClose}
+                    className="mt-2 text-sm text-slate-500 dark:text-slate-400 hover:underline"
+                >
+                    Close
+                </button>
             </div>
         ) : (
             <>

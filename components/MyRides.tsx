@@ -43,10 +43,17 @@ const MyRides: React.FC<MyRidesProps> = ({ currentUser, allRides, bookedRideIds,
               if (!driver) return null;
 
               const isPassenger = isBooked && ride.driverId !== currentUser.id;
+              const isDriver = ride.driverId === currentUser.id;
 
               return (
                 <div key={ride.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200/80 dark:border-slate-700">
-                  <RideCard ride={ride} onSelectRide={onSelectRide} users={users} onViewProfile={onViewProfile} />
+                  <RideCard 
+                    ride={ride} 
+                    onSelectRide={onSelectRide} 
+                    users={users} 
+                    onViewProfile={onViewProfile} 
+                    status={isPassenger ? 'booked' : (isDriver ? 'driving' : undefined)}
+                  />
                   {isPassenger && (
                     <div className="p-4 bg-slate-50/70 dark:bg-slate-900/50 rounded-b-xl border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-4">
                         <p className="text-sm text-slate-600 dark:text-slate-400">

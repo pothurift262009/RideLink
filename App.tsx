@@ -15,11 +15,13 @@ import RatingModal from './components/RatingModal';
 import CancelModal from './components/CancelModal';
 import UserProfile from './components/UserProfile';
 import SupportChat from './components/SupportChat';
+import HelpCentre from './components/HelpCentre';
+import TermsAndConditions from './components/TermsAndConditions';
 import { calculateTrustScore } from './services/trustScoreService';
 import { SupportIcon } from './components/icons/Icons';
 import BookingConfirmationModal from './components/BookingConfirmationModal';
 
-type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile';
+type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile' | 'help' | 'terms';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
@@ -27,7 +29,7 @@ const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [searchResults, setSearchResults] = useState<Ride[]>([]);
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
-  const [searchCriteria, setSearchCriteria] = useState({ from: '', to: '' });
+  const [searchCriteria, setSearchCriteria] = useState({ from: '', to: '', date: '', passengers: '1' });
   
   // Auth State
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -44,10 +46,15 @@ const App: React.FC = () => {
   const [rideToProcess, setRideToProcess] = useState<Ride | null>(null); // For payment, rating, or cancellation
   const [isSupportChatOpen, setSupportChatOpen] = useState<boolean>(false);
 
-  const handleSearch = useCallback((from: string, to: string) => {
-    setSearchCriteria({ from, to });
+  const handleSearch = useCallback((from: string, to: string, date: string, passengers: string) => {
+    setSearchCriteria({ from, to, date, passengers });
+    const numPassengers = parseInt(passengers, 10);
     const results = rides.filter(
-      ride => ride.from.toLowerCase() === from.toLowerCase() && ride.to.toLowerCase() === to.toLowerCase()
+      ride => 
+        ride.from.toLowerCase() === from.toLowerCase() && 
+        ride.to.toLowerCase() === to.toLowerCase() &&
+        ride.departureDate === date &&
+        ride.availableSeats >= numPassengers
     );
     setSearchResults(results);
     setCurrentPage('results');
@@ -251,9 +258,13 @@ const App: React.FC = () => {
           if (!currentUser || !userToDisplay) return null;
           return <UserProfile user={userToDisplay} currentUser={currentUser} allUsers={users} onViewProfile={handleViewProfile} />;
       }
+      case 'help':
+        return <HelpCentre onBack={() => handleNavigate('landing')} />;
+      case 'terms':
+        return <TermsAndConditions onBack={() => handleNavigate('landing')} />;
       case 'landing':
       default:
-        return <LandingPage onSearch={handleSearch} />;
+        return <LandingPage onSearch={handleSearch} onNavigateToHelp={() => handleNavigate('help')} />;
     }
   };
 
@@ -272,7 +283,7 @@ const App: React.FC = () => {
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {renderPage()}
       </main>
-      <Footer />
+      <Footer onNavigate={handleNavigate} />
       
       {/* Modals */}
       <LoginModal

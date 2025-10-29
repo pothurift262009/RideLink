@@ -12,9 +12,9 @@ export const mockUsers: User[] = [
     isVerified: true,
     trustScore: 4.8,
     reviews: [
-      { id: 'r1', rideId: 'ride_x1', raterId: 'u3', rating: 5, comment: 'Priya is an excellent and safe driver. The car was clean and the journey was very smooth. Highly recommend!' },
-      { id: 'r2', rideId: 'ride_x2', raterId: 'u4', rating: 5, comment: 'Very punctual and professional. Felt very safe throughout the trip from Chennai to Bangalore.' },
-      { id: 'r3', rideId: 'ride_x3', raterId: 'u5', rating: 4, comment: 'Good driver, friendly conversation. A bit of a delay in starting but made up for it.' },
+      { id: 'r1', rideId: 'ride_6', raterId: 'user_passenger_1', rating: 5, comment: 'Priya is an excellent and safe driver. The car was clean and the journey was very smooth. Highly recommend!' },
+      { id: 'r2', rideId: 'ride_7', raterId: 'user_passenger_2', rating: 5, comment: 'Very punctual and professional. Felt very safe throughout the trip from Chennai to Bangalore.' },
+      { id: 'r3', rideId: 'ride_8', raterId: 'user_passenger_3', rating: 4, comment: 'Good driver, friendly conversation. A bit of a delay in starting but made up for it.' },
     ],
   },
   {
@@ -28,8 +28,8 @@ export const mockUsers: User[] = [
     isVerified: true,
     trustScore: 4.5,
     reviews: [
-      { id: 'r4', rideId: 'ride_x4', raterId: 'u6', rating: 5, comment: 'Arjun is a great co-passenger to have. On time and respectful.' },
-      { id: 'r5', rideId: 'ride_x5', raterId: 'u7', rating: 4, comment: 'The drive was great, but the music was a bit too loud for my taste. Otherwise, a solid 4 stars.' },
+      { id: 'r4', rideId: 'ride_2', raterId: 'user_passenger_2', rating: 5, comment: 'Arjun was a great driver. He was on time and very respectful.' },
+      { id: 'r5', rideId: 'ride_9', raterId: 'user_passenger_3', rating: 4, comment: 'The drive was great, but the music was a bit too loud for my taste. Otherwise, a solid 4 stars.' },
     ],
   },
   {
@@ -43,8 +43,8 @@ export const mockUsers: User[] = [
     isVerified: true,
     trustScore: 4.9,
     reviews: [
-        { id: 'r6', rideId: 'ride_x6', raterId: 'u1', rating: 5, comment: 'Anjali is the best! Very safe driver, super clean car, and she even offered snacks. It felt like travelling with a friend.' },
-        { id: 'r7', rideId: 'ride_x7', raterId: 'u2', rating: 5, comment: 'On time, professional, and a very comfortable ride. The women-only option is a fantastic feature.' },
+        { id: 'r6', rideId: 'ride_10', raterId: 'user_1', rating: 5, comment: 'Anjali is the best! Very safe driver, super clean car, and she even offered snacks. It felt like travelling with a friend.' },
+        { id: 'r7', rideId: 'ride_11', raterId: 'user_passenger_2', rating: 5, comment: 'On time, professional, and a very comfortable ride. The women-only option is a fantastic feature.' },
     ]
   },
    {
@@ -58,9 +58,9 @@ export const mockUsers: User[] = [
     isVerified: false,
     trustScore: 3.2,
     reviews: [
-        { id: 'r8', rideId: 'ride_x8', raterId: 'u9', rating: 3, comment: 'The ride was okay, but the driver was 30 minutes late for pickup.' },
-        { id: 'r9', rideId: 'ride_x9', raterId: 'u10', rating: 4, comment: 'Decent trip, got me from A to B.' },
-        { id: 'r10', rideId: 'ride_x10', raterId: 'u11', rating: 2, comment: 'Car was not very clean and the driving was a bit aggressive for my liking.' },
+        { id: 'r8', rideId: 'ride_4', raterId: 'user_passenger_1', rating: 3, comment: 'The ride was okay, but the driver was 30 minutes late for pickup.' },
+        { id: 'r9', rideId: 'ride_12', raterId: 'user_passenger_2', rating: 4, comment: 'Decent trip, got me from A to B.' },
+        { id: 'r10', rideId: 'ride_13', raterId: 'user_passenger_3', rating: 2, comment: 'Car was not very clean and the driving was a bit aggressive for my liking.' },
     ]
   },
   {
@@ -73,6 +73,30 @@ export const mockUsers: User[] = [
     verificationType: VerificationType.LinkedIn,
     isVerified: true,
     trustScore: 4.6,
+    reviews: [],
+  },
+  {
+    id: 'user_passenger_2',
+    name: 'Kavya Reddy',
+    email: 'kavya.reddy@example.com',
+    password: 'password123',
+    avatarUrl: 'https://picsum.photos/seed/kavya/200/200',
+    gender: Gender.Female,
+    verificationType: VerificationType.Aadhaar,
+    isVerified: true,
+    trustScore: 4.8,
+    reviews: [],
+  },
+  {
+    id: 'user_passenger_3',
+    name: 'Sameer Ali',
+    email: 'sameer.ali@example.com',
+    password: 'password123',
+    avatarUrl: 'https://picsum.photos/seed/sameer/200/200',
+    gender: Gender.Male,
+    verificationType: VerificationType.LinkedIn,
+    isVerified: false,
+    trustScore: 4.2,
     reviews: [],
   },
 ];
@@ -90,6 +114,15 @@ const yesterday = new Date(d);
 yesterday.setDate(d.getDate() - 1);
 const lastWeek = new Date(d);
 lastWeek.setDate(d.getDate() - 7);
+const threeDaysAgo = new Date(d);
+threeDaysAgo.setDate(d.getDate() - 3);
+const tenDaysAgo = new Date(d);
+tenDaysAgo.setDate(d.getDate() - 10);
+const fifteenDaysAgo = new Date(d);
+fifteenDaysAgo.setDate(d.getDate() - 15);
+const twentyDaysAgo = new Date(d);
+twentyDaysAgo.setDate(d.getDate() - 20);
+
 
 const toYyyyMmDd = (date: Date) => date.toISOString().split('T')[0];
 
@@ -115,7 +148,7 @@ export const mockRides: Ride[] = [
     departureTime: '07:30 AM',
     estimatedArrivalTime: '01:30 PM',
     pricePerSeat: 800,
-    availableSeats: 1,
+    availableSeats: 0,
     car: { make: 'Maruti Suzuki', model: 'Swift', color: 'Red', plateNumber: 'TN02CD5678' },
   },
   {
@@ -139,7 +172,7 @@ export const mockRides: Ride[] = [
     departureTime: '05:00 AM',
     estimatedArrivalTime: '11:00 AM',
     pricePerSeat: 750,
-    availableSeats: 2,
+    availableSeats: 0,
     car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456' },
   },
   {
@@ -153,6 +186,102 @@ export const mockRides: Ride[] = [
     pricePerSeat: 850,
     availableSeats: 3,
     car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+  },
+  {
+    id: 'ride_6',
+    driverId: 'user_1', // Priya
+    from: 'Chennai',
+    to: 'Bangalore',
+    departureDate: toYyyyMmDd(threeDaysAgo),
+    departureTime: '08:00 AM',
+    estimatedArrivalTime: '02:00 PM',
+    pricePerSeat: 850,
+    availableSeats: 0,
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+  },
+  {
+    id: 'ride_7',
+    driverId: 'user_1', // Priya
+    from: 'Bangalore',
+    to: 'Chennai',
+    departureDate: toYyyyMmDd(tenDaysAgo),
+    departureTime: '06:00 PM',
+    estimatedArrivalTime: '11:50 PM',
+    pricePerSeat: 820,
+    availableSeats: 0,
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+  },
+  {
+    id: 'ride_8',
+    driverId: 'user_1', // Priya
+    from: 'Chennai',
+    to: 'Bangalore',
+    departureDate: toYyyyMmDd(fifteenDaysAgo),
+    departureTime: '09:30 AM',
+    estimatedArrivalTime: '03:30 PM',
+    pricePerSeat: 840,
+    availableSeats: 0,
+    car: { make: 'Hyundai', model: 'Creta', color: 'White', plateNumber: 'TN01AB1234' },
+  },
+  {
+    id: 'ride_9',
+    driverId: 'user_2', // Arjun
+    from: 'Bangalore',
+    to: 'Chennai',
+    departureDate: toYyyyMmDd(twentyDaysAgo),
+    departureTime: '05:00 PM',
+    estimatedArrivalTime: '11:00 PM',
+    pricePerSeat: 800,
+    availableSeats: 0,
+    car: { make: 'Maruti Suzuki', model: 'Swift', color: 'Red', plateNumber: 'TN02CD5678' },
+  },
+  {
+    id: 'ride_10',
+    driverId: 'user_3', // Anjali
+    from: 'Chennai',
+    to: 'Bangalore',
+    departureDate: toYyyyMmDd(tenDaysAgo),
+    departureTime: '10:00 AM',
+    estimatedArrivalTime: '04:00 PM',
+    pricePerSeat: 920,
+    availableSeats: 0,
+    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012' },
+  },
+  {
+    id: 'ride_11',
+    driverId: 'user_3', // Anjali
+    from: 'Bangalore',
+    to: 'Chennai',
+    departureDate: toYyyyMmDd(fifteenDaysAgo),
+    departureTime: '01:00 PM',
+    estimatedArrivalTime: '07:00 PM',
+    pricePerSeat: 900,
+    availableSeats: 0,
+    car: { make: 'Kia', model: 'Seltos', color: 'Grey', plateNumber: 'TN03EF9012' },
+  },
+  {
+    id: 'ride_12',
+    driverId: 'user_4', // Vikram
+    from: 'Bangalore',
+    to: 'Chennai',
+    departureDate: toYyyyMmDd(threeDaysAgo),
+    departureTime: '07:00 AM',
+    estimatedArrivalTime: '01:00 PM',
+    pricePerSeat: 750,
+    availableSeats: 0,
+    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456' },
+  },
+  {
+    id: 'ride_13',
+    driverId: 'user_4', // Vikram
+    from: 'Chennai',
+    to: 'Bangalore',
+    departureDate: toYyyyMmDd(twentyDaysAgo),
+    departureTime: '11:00 AM',
+    estimatedArrivalTime: '05:00 PM',
+    pricePerSeat: 760,
+    availableSeats: 0,
+    car: { make: 'Tata', model: 'Nexon', color: 'Blue', plateNumber: 'TN04GH3456' },
   },
 ];
 

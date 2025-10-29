@@ -1,6 +1,6 @@
 import React from 'react';
 import { Ride, User } from '../types';
-import { ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, UsersIcon, CarIcon, RouteLineIcon } from './icons/Icons';
+import { ShieldCheckIcon, StarIcon, CurrencyRupeeIcon, UsersIcon, CarIcon, RouteLineIcon, CheckCircleIcon } from './icons/Icons';
 
 interface RideCardProps {
   ride: Ride;
@@ -8,9 +8,10 @@ interface RideCardProps {
   users: User[];
   isHighlighted?: boolean;
   onViewProfile: (user: User) => void;
+  status?: 'booked' | 'driving';
 }
 
-const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighlighted = false, onViewProfile }) => {
+const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighlighted = false, onViewProfile, status }) => {
   const driver = users.find(u => u.id === ride.driverId);
 
   if (!driver) return null;
@@ -18,12 +19,26 @@ const RideCard: React.FC<RideCardProps> = ({ ride, onSelectRide, users, isHighli
   return (
     <div 
       onClick={() => onSelectRide(ride)}
-      className={`rounded-xl shadow-lg overflow-hidden flex transition-all duration-300 cursor-pointer transform hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] ${
+      className={`relative rounded-xl shadow-lg overflow-hidden flex transition-all duration-300 cursor-pointer transform hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02] ${
         isHighlighted
           ? 'bg-indigo-50 dark:bg-slate-700 border-2 border-indigo-500 dark:border-indigo-400'
           : 'bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 hover:border-indigo-400 dark:hover:border-indigo-600'
       }`}
     >
+      {/* Status Badge */}
+      {status === 'booked' && (
+        <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300 text-xs font-semibold px-2.5 py-1 rounded-full z-10">
+            <CheckCircleIcon className="w-4 h-4" />
+            <span>Booked</span>
+        </div>
+      )}
+      {status === 'driving' && (
+        <div className="absolute top-2 right-2 flex items-center gap-1.5 bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full z-10">
+            <CarIcon className="w-4 h-4" />
+            <span>You're Driving</span>
+        </div>
+      )}
+
       {/* Driver Info Panel */}
       <div
         onClick={(e) => { e.stopPropagation(); onViewProfile(driver); }}

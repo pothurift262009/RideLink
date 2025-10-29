@@ -1,6 +1,13 @@
 import React from 'react';
 
-const Footer: React.FC = () => {
+// A generic page type to handle navigation from the footer
+type FooterPage = 'help' | 'terms';
+
+interface FooterProps {
+  onNavigate: (page: FooterPage) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
     <footer className="bg-slate-900 text-slate-400">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -32,11 +39,11 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-base font-semibold text-white mb-4 tracking-wider">Legal</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">Passenger Terms</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Driver Terms</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Corporate Affairs</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Community Guidelines</a></li>
+              <li><a onClick={() => onNavigate('terms')} className="hover:text-white transition-colors cursor-pointer">Terms & Conditions</a></li>
+              <li><a href="#" className="hover:text-white transition-colors cursor-pointer">Passenger Terms</a></li>
+              <li><a href="#" className="hover:text-white transition-colors cursor-pointer">Driver Terms</a></li>
+              <li><a href="#" className="hover:text-white transition-colors cursor-pointer">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-white transition-colors cursor-pointer">Community Guidelines</a></li>
             </ul>
           </div>
 

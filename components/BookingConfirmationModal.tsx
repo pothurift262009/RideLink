@@ -1,6 +1,7 @@
 import React from 'react';
 import { Ride, User } from '../types';
-import { RouteIcon, CurrencyRupeeIcon, UserCircleIcon, CheckCircleIcon } from './icons/Icons';
+// FIX: Import 'IconProps' to correctly type the icon element.
+import { RouteIcon, CurrencyRupeeIcon, UserCircleIcon, CheckCircleIcon, CalendarIcon, ClockIcon, type IconProps } from './icons/Icons';
 
 interface BookingConfirmationModalProps {
   isOpen: boolean;
@@ -9,6 +10,18 @@ interface BookingConfirmationModalProps {
   driver: User;
   onConfirm: () => void;
 }
+
+// FIX: Specify the type of the icon prop as React.ReactElement<IconProps> to allow passing props like 'className'.
+const DetailRow: React.FC<{ icon: React.ReactElement<IconProps>, label: string, value: string, isHighlighted?: boolean }> = ({ icon, label, value, isHighlighted }) => (
+    <div className="flex items-center gap-4">
+        {React.cloneElement(icon, { className: 'w-6 h-6 text-slate-500 flex-shrink-0' })}
+        <div>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{label}</p>
+            <p className={`font-semibold ${isHighlighted ? 'text-lg text-indigo-600 dark:text-indigo-400' : 'text-slate-800 dark:text-slate-100'}`}>{value}</p>
+        </div>
+    </div>
+);
+
 
 const BookingConfirmationModal: React.FC<BookingConfirmationModalProps> = ({ isOpen, onClose, ride, driver, onConfirm }) => {
   if (!isOpen) return null;
@@ -34,27 +47,12 @@ const BookingConfirmationModal: React.FC<BookingConfirmationModalProps> = ({ isO
             </div>
 
             <div className="space-y-4 text-left bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
-                <div className="flex items-center gap-4">
-                    <RouteIcon className="w-6 h-6 text-slate-500" />
-                    <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Route</p>
-                        <p className="font-semibold text-slate-800 dark:text-slate-100">{ride.from} → {ride.to}</p>
-                    </div>
-                </div>
-                 <div className="flex items-center gap-4">
-                    <UserCircleIcon className="w-6 h-6 text-slate-500" />
-                    <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Driver</p>
-                        <p className="font-semibold text-slate-800 dark:text-slate-100">{driver.name}</p>
-                    </div>
-                </div>
-                <div className="flex items-center gap-4">
-                    <CurrencyRupeeIcon className="w-6 h-6 text-slate-500" />
-                    <div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">Price</p>
-                        <p className="font-semibold text-slate-800 dark:text-slate-100">₹{ride.pricePerSeat} per seat</p>
-                    </div>
-                </div>
+                <DetailRow icon={<RouteIcon />} label="Route" value={`${ride.from} → ${ride.to}`} />
+                <DetailRow icon={<UserCircleIcon />} label="Driver" value={driver.name} />
+                <DetailRow icon={<CalendarIcon />} label="Date" value={new Date(ride.departureDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })} />
+                <DetailRow icon={<ClockIcon />} label="Departure Time" value={ride.departureTime} />
+                <div className="border-t border-slate-200 dark:border-slate-600 my-2"></div>
+                <DetailRow icon={<CurrencyRupeeIcon />} label="Total Price" value={`₹${ride.pricePerSeat}`} isHighlighted={true} />
             </div>
 
             <div className="mt-6 flex flex-col sm:flex-row-reverse gap-3">

@@ -8,7 +8,7 @@ interface HeaderProps {
   onLoginClick: () => void;
   onSignUpClick: () => void;
   onLogoutClick: () => void;
-  onNavigate: (page: 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile') => void;
+  onNavigate: (page: 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile' | 'help' | 'terms') => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick, onSignUpClick, onLogoutClick, onNavigate }) => {
@@ -33,6 +33,7 @@ const Header: React.FC<HeaderProps> = ({ currentUser, onLogoClick, onLoginClick,
                 <a onClick={() => onNavigate('offer')} className="text-gray-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors cursor-pointer">Offer a Ride</a>
                 <a onClick={() => onNavigate('myRides')} className="text-gray-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors cursor-pointer">My Rides</a>
                 <a onClick={() => onNavigate('profile')} className="text-gray-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors cursor-pointer">My Profile</a>
+                <a onClick={() => onNavigate('help')} className="text-gray-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors cursor-pointer">Help Centre</a>
                 <div className="flex items-center gap-4 pl-2 border-l border-slate-200 dark:border-slate-700">
                    <ThemeToggle />
                    <div 
