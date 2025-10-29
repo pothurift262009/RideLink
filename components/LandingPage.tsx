@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { 
     LeafIcon, ShieldCheckIcon, StarIcon, TicketIcon, 
     CarIcon, SparklesIcon, ChatBubbleIcon, FemaleUserIcon, 
-    CurrencyRupeeIcon, ClockIcon, UsersIcon 
+    CurrencyRupeeIcon, ClockIcon, UsersIcon, MagicWandIcon 
 } from './icons/Icons';
+import AITripPlannerModal from './AITripPlannerModal';
+import { AITripPlan } from '../types';
 
 interface LandingPageProps {
   onSearch: (from: string, to: string, date: string, passengers: string) => void;
@@ -11,10 +13,11 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp }) => {
-  const [from, setFrom] = useState('Chennai');
-  const [to, setTo] = useState('Bangalore');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [passengers, setPassengers] = useState('1');
+  const [isPlannerOpen, setIsPlannerOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +25,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
       onSearch(from, to, date, passengers);
     }
   };
+
+  const handlePopularRouteClick = (routeFrom: string, routeTo: string) => {
+    setFrom(routeFrom);
+    setTo(routeTo);
+    // Use a default date for popular route searches, as the planner might suggest a better one
+    const searchDate = new Date().toISOString().split('T')[0];
+    onSearch(routeFrom, routeTo, searchDate, passengers);
+  };
+  
+  const handlePlanGenerated = (plan: AITripPlan, planFrom: string, planTo: string) => {
+      setFrom(planFrom);
+      setTo(planTo);
+      setIsPlannerOpen(false);
+      // Trigger search with the new from/to values from the planner
+      const searchDate = new Date().toISOString().split('T')[0];
+      onSearch(planFrom, planTo, searchDate, passengers);
+  };
+
+  const popularRoutes = [
+    { from: 'Chennai', to: 'Bangalore', price: 850, imageUrl: 'https://picsum.photos/seed/chennai/400/300' },
+    { from: 'Mumbai', to: 'Pune', price: 450, imageUrl: 'https://picsum.photos/seed/mumbai/400/300' },
+    { from: 'Delhi', to: 'Jaipur', price: 600, imageUrl: 'https://picsum.photos/seed/delhi/400/300' },
+    { from: 'Hyderabad', to: 'Vijayawada', price: 700, imageUrl: 'https://picsum.photos/seed/hyderabad/400/300' },
+  ];
 
   const kpis = [
     {
@@ -150,6 +177,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
   ];
 
   return (
+    <>
     <div className="flex flex-col items-center justify-center -mt-8 md:-mt-12">
       <div className="w-full bg-gradient-to-tr from-violet-100 via-pink-50 to-blue-100 dark:from-violet-900/70 dark:via-pink-900/30 dark:to-blue-900/70 rounded-2xl shadow-lg relative overflow-hidden">
         
@@ -158,6 +186,29 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
         <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 dark:bg-yellow-900 rounded-full mix-blend-multiply filter blur-xl opacity-40 dark:opacity-50 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 dark:bg-pink-900 rounded-full mix-blend-multiply filter blur-xl opacity-40 dark:opacity-50 animate-blob animation-delay-4000"></div>
         
+        {/* Highway Visuals */}
+        <div className="absolute inset-x-0 bottom-0 h-1/2 z-0 overflow-hidden pointer-events-none">
+            {/* Road */}
+            <div className="absolute bottom-0 left-0 right-0 h-24 bg-slate-700/50 dark:bg-slate-800/70 [clip-path:polygon(0_15%,100%_0,100%_100%,0%_100%)]"></div>
+            {/* Lane Markings */}
+            <div className="absolute bottom-10 left-0 w-full h-1 border-t-4 border-dashed border-slate-500/30 dark:border-slate-600/50"></div>
+            
+            {/* Car 1 */}
+            <div className="absolute bottom-[4.5rem] w-full animate-drive-fast">
+                <div className="w-24 h-10 bg-indigo-500 rounded-t-lg rounded-b-md shadow-lg relative left-[15%] transform -skew-x-12">
+                    <div className="absolute top-2 left-2 w-6 h-5 bg-cyan-300/50 rounded-sm skew-x-12"></div>
+                    <div className="absolute top-2 right-2 w-10 h-5 bg-cyan-300/50 rounded-sm skew-x-12"></div>
+                </div>
+            </div>
+            {/* Car 2 */}
+            <div className="absolute bottom-8 w-full animate-drive-slow">
+                <div className="w-20 h-8 bg-rose-500 rounded-t-lg rounded-b-md shadow-lg relative left-[55%] transform -skew-x-12">
+                    <div className="absolute top-1 left-2 w-5 h-4 bg-cyan-300/50 rounded-sm skew-x-12"></div>
+                    <div className="absolute top-1 right-2 w-8 h-4 bg-cyan-300/50 rounded-sm skew-x-12"></div>
+                </div>
+            </div>
+        </div>
+
         <div className="w-full h-full p-8 md:p-20 flex flex-col items-center justify-center text-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-black text-slate-800 dark:text-slate-100 leading-tight mb-4 tracking-tighter">
               Your Vibe, Your Ride.
@@ -171,7 +222,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
       <div className="w-full max-w-5xl -mt-16 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200 dark:border-slate-700">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 items-center gap-4">
           <div className="md:col-span-1 relative flex items-center">
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+             <svg xmlns="http://www.w.org/2000/svg" className="h-5 w-5 absolute left-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -248,6 +299,24 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
             ))}
         </div>
       </div>
+      
+      {/* AI Trip Planner Section */}
+      <div className="w-full max-w-6xl mx-auto mt-16 md:mt-24 px-4 text-center bg-indigo-50 dark:bg-slate-800/50 border border-indigo-200 dark:border-slate-700 rounded-2xl p-8 md:p-12">
+          <div className="max-w-xl mx-auto">
+              <MagicWandIcon className="w-12 h-12 text-indigo-500 mx-auto mb-4" />
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Plan Your Perfect Trip with AI</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
+                  Not sure when to travel? Let our AI analyze historical data to find the best time, price, and driver for your route.
+              </p>
+              <button
+                onClick={() => setIsPlannerOpen(true)}
+                className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold px-8 py-4 rounded-lg hover:from-indigo-700 hover:to-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 text-lg"
+              >
+                  Launch Planner
+              </button>
+          </div>
+      </div>
+
 
       {/* Personas Section */}
       <div className="w-full max-w-6xl mx-auto mt-16 md:mt-24 px-4 text-center">
@@ -281,6 +350,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
                     </li>
                   ))}
                 </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Popular Routes Section */}
+      <div className="w-full max-w-6xl mx-auto mt-16 md:mt-24 px-4 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Explore Popular Routes</h2>
+        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto mb-12">
+          Your next adventure is just a click away. Join thousands of travellers on these top routes.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {popularRoutes.map((route) => (
+            <div 
+              key={`${route.from}-${route.to}`}
+              onClick={() => handlePopularRouteClick(route.from, route.to)}
+              className="relative rounded-xl overflow-hidden shadow-lg cursor-pointer group transform transition-all hover:scale-105 hover:shadow-2xl"
+            >
+              <img src={route.imageUrl} alt={`${route.from} to ${route.to}`} className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+              <div className="absolute bottom-0 left-0 p-4 text-white">
+                <h3 className="text-xl font-bold">{route.from} → {route.to}</h3>
+                <p className="text-sm font-medium opacity-90">From ₹{route.price}</p>
               </div>
             </div>
           ))}
@@ -326,8 +419,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
             </button>
         </div>
       </div>
-
     </div>
+    <AITripPlannerModal
+      isOpen={isPlannerOpen}
+      onClose={() => setIsPlannerOpen(false)}
+      onPlanGenerated={handlePlanGenerated}
+    />
+    </>
   );
 };
 

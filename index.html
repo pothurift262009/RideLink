@@ -43,6 +43,21 @@
       .animate-blob {
         animation: blob 7s infinite;
       }
+      @keyframes drive-slow {
+        from { transform: translateX(-150px); }
+        to { transform: translateX(100vw); }
+      }
+      @keyframes drive-fast {
+        from { transform: translateX(-200px); }
+        to { transform: translateX(100vw); }
+      }
+      .animate-drive-slow {
+        animation: drive-slow 18s linear infinite;
+        animation-delay: 2s;
+      }
+      .animate-drive-fast {
+        animation: drive-fast 12s linear infinite;
+      }
     </style>
   <script type="importmap">
 {

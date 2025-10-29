@@ -53,7 +53,8 @@ const App: React.FC = () => {
       ride => 
         ride.from.toLowerCase() === from.toLowerCase() && 
         ride.to.toLowerCase() === to.toLowerCase() &&
-        ride.departureDate === date &&
+        // For demonstration, let's ignore the date to show more results
+        // ride.departureDate === date && 
         ride.availableSeats >= numPassengers
     );
     setSearchResults(results);

@@ -187,3 +187,10 @@ export const SortAscDescIcon: React.FC<IconProps> = (props) => (
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5" />
     </svg>
 );
+
+export const MagicWandIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c.251.042.502.092.753.15C12.44 4.05 15 5.535 15 7.5c0 1.54-1.353 3.32-3.663 4.636-1.011.493-2.036.83-3.087.998M9.75 3.104c.251.042.502.092.753.15C12.44 4.05 15 5.535 15 7.5c0 1.54-1.353 3.32-3.663 4.636-1.011.493-2.036.83-3.087.998M15 7.5V11m0 0L18.75 8.25M15 11L11.25 8.25" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-1.5m0 0V15.188c0-1.082.023-2.152.066-3.21.037-.9.08-1.796.13-2.686a9.01 9.01 0 011.88-3.385 1.5 1.5 0 012.33-.255" />
+  </svg>
+);

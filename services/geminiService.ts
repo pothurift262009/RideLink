@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { Rating, AISummary, Sentiment } from '../types';
+import { Rating, AISummary, Sentiment, AITripPlan, Ride, User } from '../types';
 
 const defaultSummary: AISummary = {
     summary: "This driver is new and has no reviews yet. Be the first to leave feedback!",
@@ -69,4 +69,100 @@ export const summarizeReviews = async (reviews: Rating[]): Promise<AISummary> =>
         sentiment: 'Neutral'
     };
   }
+};
+
+
+export const generateTripPlan = async (
+  from: string,
+  to: string,
+  priority: string,
+  allRides: Ride[],
+  allUsers: User[],
+): Promise<AITripPlan> => {
+    // 1. Filter and summarize historical data for the specific route
+    const relevantRides = allRides.filter(
+        (ride) => ride.from.toLowerCase() === from.toLowerCase() && ride.to.toLowerCase() === to.toLowerCase()
+    );
+
+    if (relevantRides.length === 0) {
+        return {
+            bestTimeToTravel: "Data not available for this route yet.",
+            estimatedCost: "No pricing data available.",
+            routeInsights: "This seems to be a new route! Be one of the first to travel it.",
+            driverInsights: "As this is a new route, driver data is not yet available."
+        };
+    }
+
+    const prices = relevantRides.map(r => r.pricePerSeat);
+    const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    const drivers = relevantRides.map(r => allUsers.find(u => u.id === r.driverId)).filter(Boolean) as User[];
+    const topDriver = drivers.sort((a, b) => b.trustScore - a.trustScore)[0];
+    
+    const historicalDataSummary = `
+      - Total rides recorded: ${relevantRides.length}
+      - Average Price: ₹${avgPrice.toFixed(0)}
+      - Price Range: ₹${minPrice} - ₹${maxPrice}
+      - A top-rated driver on this route is ${topDriver.name} with a trust score of ${topDriver.trustScore}.
+    `;
+
+    // 2. Construct the prompt for Gemini
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const prompt = `
+        You are an AI trip planner for RideLink, an Indian carpooling app.
+        A user wants to travel from "${from}" to "${to}".
+        The user's main priority is: "${priority}".
+
+        Analyze the following historical ride data for this route and generate an optimal trip plan.
+        
+        Historical Data Summary:
+        ${historicalDataSummary}
+
+        Based on the user's priority and the data, provide a structured trip plan.
+    `;
+    
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: Type.OBJECT,
+                    properties: {
+                        bestTimeToTravel: {
+                            type: Type.STRING,
+                            description: "A concise recommendation on the best day/time to travel to meet the user's priority. E.g., 'For the lowest prices, travel on weekday mornings.'"
+                        },
+                        estimatedCost: {
+                            type: Type.STRING,
+                            description: `The average cost for this route and potential savings. E.g., 'Average price is ₹${avgPrice.toFixed(0)}. By following our suggestion, you could save up to ₹${(avgPrice - minPrice).toFixed(0)}.'`
+                        },
+                        routeInsights: {
+                            type: Type.STRING,
+                            description: "A brief summary of the route's popularity and average duration. E.g., 'This is a popular route with over 25+ rides available weekly.'"
+                        },
+                        driverInsights: {
+                            type: Type.STRING,
+                            description: `A mention of the quality of drivers. E.g., 'Highly-rated drivers like ${topDriver.name} (${topDriver.trustScore} score) are common on this route.'`
+                        }
+                    }
+                }
+            }
+        });
+        
+        return JSON.parse(response.text);
+
+    } catch (error) {
+        console.error("Error generating trip plan from Gemini:", error);
+        // Return a fallback plan on error
+        return {
+            bestTimeToTravel: "We couldn't generate a custom plan right now.",
+            estimatedCost: `The average price is around ₹${avgPrice.toFixed(0)}.`,
+            routeInsights: "This is a frequently traveled route on RideLink.",
+            driverInsights: "You'll find many experienced and verified drivers."
+        };
+    }
 };

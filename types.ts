@@ -77,3 +77,10 @@ export interface AISummary {
   summary: string;
   sentiment: Sentiment;
 }
+
+export interface AITripPlan {
+  bestTimeToTravel: string;
+  estimatedCost: string;
+  routeInsights: string;
+  driverInsights: string;
+}
