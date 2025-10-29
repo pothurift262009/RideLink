@@ -143,6 +143,14 @@ const App: React.FC = () => {
   
   const handleConfirmPayment = useCallback((rideId: string) => {
     setBookedRideIds(prev => [...prev, rideId]);
+    // Decrease available seats for the booked ride
+    setRides(prevRides => 
+      prevRides.map(ride => 
+        ride.id === rideId 
+          ? { ...ride, availableSeats: Math.max(0, ride.availableSeats - 1) } 
+          : ride
+      )
+    );
     // The modal now handles its own closure via user action
   }, []);
 
@@ -159,6 +167,14 @@ const App: React.FC = () => {
 
   const handleConfirmCancel = useCallback((rideId: string) => {
     setBookedRideIds(prev => prev.filter(id => id !== rideId));
+    // Increase available seats for the cancelled ride
+    setRides(prevRides =>
+      prevRides.map(ride =>
+        ride.id === rideId
+          ? { ...ride, availableSeats: ride.availableSeats + 1 }
+          : ride
+      )
+    );
     setCancelModalOpen(false);
     setRideToProcess(null);
   }, []);

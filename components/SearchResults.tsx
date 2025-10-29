@@ -31,7 +31,7 @@ const parseTime = (timeStr: string): number => {
 
 const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, searchCriteria, users, onViewProfile }) => {
   const [womenOnly, setWomenOnly] = useState(false);
-  const [hoveredRideId, setHoveredRideId] = useState<string | null>(null);
+  const [highlightedRideId, setHighlightedRideId] = useState<string | null>(null);
 
   const maxPrice = useMemo(() => {
     if (rides.length === 0) return 1500;
@@ -189,14 +189,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
             {filteredAndSortedRides.map(ride => (
               <div 
                 key={ride.id}
-                onMouseEnter={() => setHoveredRideId(ride.id)}
-                onMouseLeave={() => setHoveredRideId(null)}
+                onMouseEnter={() => setHighlightedRideId(ride.id)}
+                onMouseLeave={() => setHighlightedRideId(null)}
               >
                 <RideCard 
                   ride={ride} 
                   onSelectRide={onSelectRide} 
                   users={users} 
-                  isHighlighted={ride.id === hoveredRideId}
+                  isHighlighted={ride.id === highlightedRideId}
                   onViewProfile={onViewProfile}
                 />
               </div>
@@ -218,7 +218,8 @@ const SearchResults: React.FC<SearchResultsProps> = ({ rides, onSelectRide, sear
                 startCoords={cityCoordinates[searchCriteria.from]}
                 endCoords={cityCoordinates[searchCriteria.to]}
                 rides={filteredAndSortedRides}
-                highlightedRideId={hoveredRideId}
+                highlightedRideId={highlightedRideId}
+                onHighlightRide={setHighlightedRideId}
               />
             )}
          </div>

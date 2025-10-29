@@ -8,9 +8,10 @@ interface MapComponentProps {
   rides: Ride[];
   highlightedRideId?: string | null;
   driverPosition?: number; // Percentage (0-100) along the route
+  onHighlightRide?: (rideId: string | null) => void;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, rides, highlightedRideId, driverPosition }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, rides, highlightedRideId, driverPosition, onHighlightRide }) => {
   const viewBoxWidth = 100;
   const viewBoxHeight = 100;
   
@@ -45,16 +46,31 @@ const MapComponent: React.FC<MapComponentProps> = ({ startCoords, endCoords, rid
             {rides.map(ride => {
                 const isHighlighted = ride.id === highlightedRideId;
                 return (
-                    <line
+                    <g
                         key={ride.id}
-                        x1={startCoords.x}
-                        y1={startCoords.y}
-                        x2={endCoords.x}
-                        y2={endCoords.y}
-                        strokeWidth={isHighlighted ? "1.5" : "0.8"}
-                        className={`transition-all duration-300 ${isHighlighted ? 'stroke-indigo-500' : 'stroke-slate-400/70 dark:stroke-slate-600/70'}`}
-                        strokeDasharray={isHighlighted ? "none" : "2 2"}
-                    />
+                        onClick={() => onHighlightRide && onHighlightRide(ride.id)}
+                        className="cursor-pointer"
+                    >
+                        {/* Invisible thicker line for easier clicking */}
+                        <line
+                            x1={startCoords.x}
+                            y1={startCoords.y}
+                            x2={endCoords.x}
+                            y2={endCoords.y}
+                            stroke="transparent"
+                            strokeWidth="4"
+                        />
+                         {/* Visible line */}
+                        <line
+                            x1={startCoords.x}
+                            y1={startCoords.y}
+                            x2={endCoords.x}
+                            y2={endCoords.y}
+                            strokeWidth={isHighlighted ? "1.5" : "0.8"}
+                            className={`transition-all duration-300 pointer-events-none ${isHighlighted ? 'stroke-indigo-500' : 'stroke-slate-400/70 dark:stroke-slate-600/70'}`}
+                            strokeDasharray={isHighlighted ? "none" : "2 2"}
+                        />
+                    </g>
                 )
             })}
            
