@@ -239,7 +239,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp, o
             </div>
         </div>
 
-        <div className="w-full h-full p-8 md:p-20 flex flex-col items-center justify-center text-center relative z-10">
+        <div className="w-full h-full px-8 pt-8 pb-32 md:px-20 md:pt-20 md:pb-48 flex flex-col items-center justify-center text-center relative z-10">
             <h1 className="text-4xl md:text-6xl font-black text-slate-800 dark:text-slate-100 leading-tight mb-4 tracking-tighter">
               Your Vibe, Your Ride.
             </h1>
