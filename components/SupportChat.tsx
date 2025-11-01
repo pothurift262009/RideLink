@@ -18,6 +18,7 @@ const SupportChat: React.FC<SupportChatProps> = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [chat, setChat] = useState<Chat | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -80,6 +81,17 @@ const SupportChat: React.FC<SupportChatProps> = ({ isOpen, onClose }) => {
         setIsLoading(false);
     }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        // Manually trigger form submission which calls handleSendMessage
+        if (formRef.current) {
+            formRef.current.requestSubmit();
+        }
+    }
+  };
+
 
   if (!isOpen) return null;
 
@@ -149,11 +161,12 @@ const SupportChat: React.FC<SupportChatProps> = ({ isOpen, onClose }) => {
 
         {/* Input */}
         <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-          <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+          <form ref={formRef} onSubmit={handleSendMessage} className="flex items-center gap-2">
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Ask a question..."
               className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 rounded-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
               autoFocus

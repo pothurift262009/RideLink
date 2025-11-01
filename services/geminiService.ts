@@ -11,19 +11,19 @@ export const summarizeReviews = async (reviews: Rating[]): Promise<AISummary> =>
     return defaultSummary;
   }
   
-  // Per @google/genai guidelines, initialize with process.env.API_KEY directly.
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  try {
+    // Per @google/genai guidelines, initialize with process.env.API_KEY directly.
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  const reviewTexts = reviews.map(r => `Rating: ${r.rating}/5 - "${r.comment}"`).join('\n');
-  const prompt = `
+    const reviewTexts = reviews.map(r => `Rating: ${r.rating}/5 - "${r.comment}"`).join('\n');
+    const prompt = `
     Analyze the following user reviews for a driver on the RideLink carpooling app in India.
     Based on the reviews, provide a concise summary and a sentiment classification.
 
     Reviews:
     ${reviewTexts}
   `;
-
-  try {
+    
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
@@ -107,23 +107,23 @@ export const generateTripPlan = async (
       - Price Range: ₹${minPrice} - ₹${maxPrice}
       - A top-rated driver on this route is ${topDriver.name} with a trust score of ${topDriver.trustScore}.
     `;
-
-    // 2. Construct the prompt for Gemini
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const prompt = `
-        You are an AI trip planner for RideLink, an Indian carpooling app.
-        A user wants to travel from "${from}" to "${to}".
-        The user's main priority is: "${priority}".
-
-        Analyze the following historical ride data for this route and generate an optimal trip plan.
-        
-        Historical Data Summary:
-        ${historicalDataSummary}
-
-        Based on the user's priority and the data, provide a structured trip plan.
-    `;
     
     try {
+        // 2. Construct the prompt for Gemini
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        const prompt = `
+            You are an AI trip planner for RideLink, an Indian carpooling app.
+            A user wants to travel from "${from}" to "${to}".
+            The user's main priority is: "${priority}".
+
+            Analyze the following historical ride data for this route and generate an optimal trip plan.
+            
+            Historical Data Summary:
+            ${historicalDataSummary}
+
+            Based on the user's priority and the data, provide a structured trip plan.
+        `;
+        
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: prompt,
