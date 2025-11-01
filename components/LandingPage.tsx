@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import { 
     LeafIcon, ShieldCheckIcon, StarIcon, TicketIcon, 
     CarIcon, SparklesIcon, ChatBubbleIcon, FemaleUserIcon, 
-    CurrencyRupeeIcon, ClockIcon, UsersIcon, MagicWandIcon, CheckCircleIcon 
+    CurrencyRupeeIcon, ClockIcon, UsersIcon, MagicWandIcon, CheckCircleIcon, MicrophoneIcon 
 } from './icons/Icons';
 import AITripPlannerModal from './AITripPlannerModal';
-import { AITripPlan } from '../types';
+import { AITripPlan, Ride } from '../types';
 
 interface LandingPageProps {
   onSearch: (from: string, to: string, date: string, passengers: string) => void;
   onNavigateToHelp: () => void;
+  onBookWithVoice: () => void;
+  bookedRideIds: string[];
+  allRides: Ride[];
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp, onBookWithVoice, bookedRideIds, allRides }) => {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -246,7 +249,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
         </div>
       </div>
 
-      <div className="w-full max-w-5xl -mt-12 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200 dark:border-slate-700">
+      <div className="w-full max-w-5xl -mt-8 bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl p-6 md:p-8 rounded-2xl shadow-2xl z-20 border border-slate-200 dark:border-slate-700">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-5 items-center gap-4">
           <div className="md:col-span-1 relative flex items-center">
              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute left-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -329,18 +332,31 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
       
       {/* AI Trip Planner Section */}
       <div className="w-full max-w-6xl mx-auto mt-16 md:mt-24 px-4 text-center bg-indigo-50 dark:bg-slate-800/50 border border-indigo-200 dark:border-slate-700 rounded-2xl p-8 md:p-12">
-          <div className="max-w-xl mx-auto">
-              <MagicWandIcon className="w-12 h-12 text-indigo-500 mx-auto mb-4" />
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">Plan Your Perfect Trip with AI</h2>
+          <div className="max-w-2xl mx-auto">
+              <div className="flex justify-center items-center gap-4">
+                <MagicWandIcon className="w-12 h-12 text-indigo-500" />
+                <MicrophoneIcon className="w-10 h-10 text-rose-500" />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4 mt-4">Plan & Book with AI</h2>
               <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
-                  Not sure when to travel? Let our AI analyze historical data to find the best time, price, and driver for your route.
+                  Let our AI find the perfect ride for you. Plan your trip visually or just talk to our voice assistant to book in seconds.
               </p>
-              <button
-                onClick={() => setIsPlannerOpen(true)}
-                className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold px-8 py-4 rounded-lg hover:from-indigo-700 hover:to-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 text-lg"
-              >
-                  Launch Planner
-              </button>
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button
+                    onClick={() => setIsPlannerOpen(true)}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold px-8 py-4 rounded-lg hover:from-indigo-700 hover:to-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 text-lg"
+                >
+                    <MagicWandIcon className="w-6 h-6" />
+                    Launch Planner
+                </button>
+                <button
+                    onClick={onBookWithVoice}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white dark:bg-slate-700 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-bold px-8 py-4 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 text-lg"
+                >
+                    <MicrophoneIcon className="w-6 h-6" />
+                    Book with Voice
+                </button>
+              </div>
           </div>
       </div>
 
@@ -451,6 +467,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onSearch, onNavigateToHelp })
       isOpen={isPlannerOpen}
       onClose={() => setIsPlannerOpen(false)}
       onPlanGenerated={handlePlanGenerated}
+      allRides={allRides}
+      bookedRideIds={bookedRideIds}
     />
     </>
   );

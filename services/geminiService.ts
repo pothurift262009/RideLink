@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { Rating, AISummary, Sentiment, AITripPlan, Ride, User } from '../types';
+import { Rating, AISummary, Sentiment, AITripPlan, Ride, User, AITripSuggestion } from '../types';
 
 const defaultSummary: AISummary = {
     summary: "This driver is new and has no reviews yet. Be the first to leave feedback!",
@@ -165,4 +165,66 @@ export const generateTripPlan = async (
             driverInsights: "You'll find many experienced and verified drivers."
         };
     }
+};
+
+export const suggestTripFromHistory = async (
+  pastRides: Ride[]
+): Promise<AITripSuggestion> => {
+  if (pastRides.length === 0) {
+    throw new Error("No past rides provided for suggestion.");
+  }
+
+  const historySummary = pastRides
+    .map(ride => `- Travelled from ${ride.from} to ${ride.to}.`)
+    .join('\n');
+
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const prompt = `
+      You are an AI trip planner for RideLink, an Indian carpooling app.
+      A user wants a suggestion for a new trip based on their past travel history.
+      Analyze the following list of their completed trips and suggest a new, interesting destination.
+
+      User's Past Trips:
+      ${historySummary}
+
+      Based on this history, suggest a new trip. The suggestion should be for a popular nearby destination or a logical next trip.
+      For example, if they often travel between major cities like Chennai and Bangalore, suggest a popular weekend getaway from one of those cities like Pondicherry or Mysore.
+      Provide your response as a JSON object with 'from', 'to', and a 'reason'.
+      The 'reason' should be a short, friendly explanation for why you're suggesting this trip.
+    `;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            from: {
+              type: Type.STRING,
+              description: "The suggested departure city."
+            },
+            to: {
+              type: Type.STRING,
+              description: "The suggested destination city."
+            },
+            reason: {
+              type: Type.STRING,
+              description: "A short, friendly explanation for the suggestion. E.g., 'Since you travel to Bangalore often, how about a weekend trip to nearby Mysore?'"
+            }
+          },
+          required: ['from', 'to', 'reason']
+        }
+      }
+    });
+
+    return JSON.parse(response.text);
+
+  } catch (error) {
+    console.error("Error generating trip suggestion from Gemini:", error);
+    // Fallback in case of an error
+    throw new Error("Could not generate a trip suggestion at this time.");
+  }
 };

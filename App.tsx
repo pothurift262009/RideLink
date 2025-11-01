@@ -20,6 +20,7 @@ import TermsAndConditions from './components/TermsAndConditions';
 import { calculateTrustScore } from './services/trustScoreService';
 import { SupportIcon } from './components/icons/Icons';
 import BookingConfirmationModal from './components/BookingConfirmationModal';
+import VoiceBookingModal from './components/VoiceBookingModal';
 
 type Page = 'landing' | 'results' | 'details' | 'offer' | 'myRides' | 'profile' | 'help' | 'terms';
 
@@ -45,6 +46,8 @@ const App: React.FC = () => {
   const [isCancelModalOpen, setCancelModalOpen] = useState<boolean>(false);
   const [rideToProcess, setRideToProcess] = useState<Ride | null>(null); // For payment, rating, or cancellation
   const [isSupportChatOpen, setSupportChatOpen] = useState<boolean>(false);
+  const [isVoiceBookingModalOpen, setIsVoiceBookingModalOpen] = useState<boolean>(false);
+
 
   const handleSearch = useCallback((from: string, to: string, date: string, passengers: string) => {
     setSearchCriteria({ from, to, date, passengers });
@@ -92,6 +95,10 @@ const App: React.FC = () => {
     const protectedPages: Page[] = ['offer', 'myRides'];
     if (protectedPages.includes(currentPage) && !currentUser) {
       handleNavigate('landing');
+      // If trying to access a protected page while not logged in, also close the voice modal
+      if (isVoiceBookingModalOpen) {
+        setIsVoiceBookingModalOpen(false);
+      }
     }
     // "profile" page is special, it can be viewed if logged in, regardless of whose profile it is.
     if (currentPage === 'profile' && !currentUser) {
@@ -104,7 +111,7 @@ const App: React.FC = () => {
         handleBackToResults();
       }
     }
-  }, [currentPage, currentUser, selectedRide, users, handleNavigate, handleBackToResults]);
+  }, [currentPage, currentUser, selectedRide, users, handleNavigate, handleBackToResults, isVoiceBookingModalOpen]);
 
 
   const handleLogin = (user: User) => {
@@ -132,9 +139,13 @@ const App: React.FC = () => {
   }
 
   const handleInitiateBooking = useCallback((ride: Ride) => {
+    if (!currentUser) {
+      setLoginModalOpen(true);
+      return;
+    }
     setRideToProcess(ride);
     setBookingConfirmationOpen(true);
-  }, []);
+  }, [currentUser]);
 
   const handleConfirmBooking = () => {
     setBookingConfirmationOpen(false);
@@ -225,6 +236,14 @@ const App: React.FC = () => {
     setLoginModalOpen(false);
     setSignUpModalOpen(true);
   }
+  
+  const handleOpenVoiceModal = () => {
+    if (!currentUser) {
+        openLoginModal();
+    } else {
+        setIsVoiceBookingModalOpen(true);
+    }
+  };
 
   const renderPage = () => {
     switch (currentPage) {
@@ -281,7 +300,13 @@ const App: React.FC = () => {
         return <TermsAndConditions onBack={() => handleNavigate('landing')} />;
       case 'landing':
       default:
-        return <LandingPage onSearch={handleSearch} onNavigateToHelp={() => handleNavigate('help')} />;
+        return <LandingPage 
+            onSearch={handleSearch} 
+            onNavigateToHelp={() => handleNavigate('help')} 
+            onBookWithVoice={handleOpenVoiceModal} 
+            bookedRideIds={bookedRideIds}
+            allRides={rides}
+          />;
     }
   };
 
@@ -350,6 +375,16 @@ const App: React.FC = () => {
           driver={rideToProcessDriver}
           currentUser={currentUser}
           onSubmit={handleAddReview}
+        />
+      )}
+
+      {currentUser && (
+        <VoiceBookingModal
+          isOpen={isVoiceBookingModalOpen}
+          onClose={() => setIsVoiceBookingModalOpen(false)}
+          allRides={rides}
+          allUsers={users}
+          onBookRide={handleInitiateBooking}
         />
       )}
 

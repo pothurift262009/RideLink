@@ -98,3 +98,9 @@ export interface AITripPlan {
   routeInsights: string;
   driverInsights: string;
 }
+
+export interface AITripSuggestion {
+  from: string;
+  to: string;
+  reason: string;
+}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { AITripPlan } from '../types';
-import { generateTripPlan } from '../services/geminiService';
+import { AITripPlan, Ride } from '../types';
+import { generateTripPlan, suggestTripFromHistory } from '../services/geminiService';
 import { mockRides, mockUsers } from '../data/mockData'; // Simulating access to historical data
 import { MagicWandIcon, SparklesIcon, TicketIcon, ClockIcon, CurrencyRupeeIcon } from './icons/Icons';
 
@@ -8,16 +8,21 @@ interface AITripPlannerModalProps {
   isOpen: boolean;
   onClose: () => void;
   onPlanGenerated: (plan: AITripPlan, from: string, to: string) => void;
+  bookedRideIds: string[];
+  allRides: Ride[];
 }
 
 type PlannerState = 'idle' | 'loading' | 'success' | 'error';
 
-const AITripPlannerModal: React.FC<AITripPlannerModalProps> = ({ isOpen, onClose, onPlanGenerated }) => {
+const AITripPlannerModal: React.FC<AITripPlannerModalProps> = ({ isOpen, onClose, onPlanGenerated, bookedRideIds, allRides }) => {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [priority, setPriority] = useState('Lowest Cost');
   const [plannerState, setPlannerState] = useState<PlannerState>('idle');
   const [plan, setPlan] = useState<AITripPlan | null>(null);
+  const [suggestionReason, setSuggestionReason] = useState<string | null>(null);
+
+  const hasPastTrips = bookedRideIds.length > 0;
 
   const handleGeneratePlan = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +30,7 @@ const AITripPlannerModal: React.FC<AITripPlannerModalProps> = ({ isOpen, onClose
         alert("Please enter both 'Leaving from' and 'Going to' locations.");
         return;
     }
+    setSuggestionReason(null);
     setPlannerState('loading');
     try {
         const result = await generateTripPlan(from, to, priority, mockRides, mockUsers);
@@ -32,6 +38,28 @@ const AITripPlannerModal: React.FC<AITripPlannerModalProps> = ({ isOpen, onClose
         setPlannerState('success');
     } catch (error) {
         console.error("Trip planning failed:", error);
+        setPlannerState('error');
+    }
+  };
+
+  const handleSuggestFromHistory = async () => {
+    setSuggestionReason(null);
+    setPlannerState('loading');
+    const pastRides = allRides.filter(ride => bookedRideIds.includes(ride.id));
+    
+    try {
+        const suggestion = await suggestTripFromHistory(pastRides);
+        setFrom(suggestion.from);
+        setTo(suggestion.to);
+        setSuggestionReason(suggestion.reason);
+        
+        // Now generate a plan for the suggested route
+        const generatedPlan = await generateTripPlan(suggestion.from, suggestion.to, priority, mockRides, mockUsers);
+        setPlan(generatedPlan);
+        setPlannerState('success');
+
+    } catch (error) {
+        console.error("Trip suggestion failed:", error);
         setPlannerState('error');
     }
   };
@@ -45,6 +73,7 @@ const AITripPlannerModal: React.FC<AITripPlannerModalProps> = ({ isOpen, onClose
         setPriority('Lowest Cost');
         setPlannerState('idle');
         setPlan(null);
+        setSuggestionReason(null);
     }, 300);
   };
   
@@ -107,6 +136,23 @@ const AITripPlannerModal: React.FC<AITripPlannerModalProps> = ({ isOpen, onClose
                     <SparklesIcon className="w-5 h-5"/>
                     Generate Plan
                 </button>
+                <div className="relative flex items-center justify-center my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-slate-300 dark:border-slate-600"></span>
+                  </div>
+                  <span className="relative px-2 bg-white dark:bg-slate-800 text-sm text-slate-500">OR</span>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleSuggestFromHistory}
+                    disabled={!hasPastTrips}
+                    title={!hasPastTrips ? "You have no past trips to base suggestions on." : "Suggest a trip based on your history"}
+                    className="w-full flex justify-center items-center gap-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3 rounded-lg border border-slate-300 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <TicketIcon className="w-5 h-5"/>
+                    Suggest from past trips
+                </button>
             </form>
         )}
 
@@ -120,7 +166,14 @@ const AITripPlannerModal: React.FC<AITripPlannerModalProps> = ({ isOpen, onClose
 
         {(plannerState === 'success' && plan) && (
             <div className="space-y-4 animate-fade-in">
-                <h3 className="text-lg font-bold text-center text-slate-700 dark:text-slate-200">Your AI-Powered Trip Suggestion</h3>
+                 {suggestionReason ? (
+                    <div className="bg-indigo-50 dark:bg-indigo-900/50 p-4 rounded-lg text-center mb-4 border border-indigo-200 dark:border-indigo-700">
+                        <h4 className="font-bold text-indigo-800 dark:text-indigo-200">Here's a suggestion for you!</h4>
+                        <p className="text-sm text-indigo-700 dark:text-indigo-300">{suggestionReason}</p>
+                    </div>
+                ) : (
+                    <h3 className="text-lg font-bold text-center text-slate-700 dark:text-slate-200">Your AI-Powered Trip Suggestion</h3>
+                )}
                 <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600 space-y-3">
                     <SuggestionRow icon={<ClockIcon className="text-blue-500" />} label="Best Time to Travel" value={plan.bestTimeToTravel} />
                     <SuggestionRow icon={<CurrencyRupeeIcon className="text-green-500"/>} label="Estimated Cost" value={plan.estimatedCost} />
